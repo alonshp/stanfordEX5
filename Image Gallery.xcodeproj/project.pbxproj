@@ -13,6 +13,7 @@
 		160B10FA2070CA550092EF36 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 160B10F92070CA550092EF36 /* Assets.xcassets */; };
 		160B10FD2070CA550092EF36 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 160B10FB2070CA550092EF36 /* LaunchScreen.storyboard */; };
 		160B11062070CAAA0092EF36 /* Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 160B11052070CAAA0092EF36 /* Utilities.swift */; };
+		160B110C2070CFDF0092EF36 /* ImageGalleryCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 160B110B2070CFDF0092EF36 /* ImageGalleryCollectionViewCell.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -24,6 +25,7 @@
 		160B10FC2070CA550092EF36 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		160B10FE2070CA550092EF36 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		160B11052070CAAA0092EF36 /* Utilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utilities.swift; sourceTree = "<group>"; };
+		160B110B2070CFDF0092EF36 /* ImageGalleryCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageGalleryCollectionViewCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -56,13 +58,11 @@
 		160B10F12070CA550092EF36 /* Image Gallery */ = {
 			isa = PBXGroup;
 			children = (
-				160B10F22070CA550092EF36 /* AppDelegate.swift */,
+				160B110B2070CFDF0092EF36 /* ImageGalleryCollectionViewCell.swift */,
 				160B10F42070CA550092EF36 /* ViewController.swift */,
 				160B10F62070CA550092EF36 /* Main.storyboard */,
 				160B11052070CAAA0092EF36 /* Utilities.swift */,
-				160B10F92070CA550092EF36 /* Assets.xcassets */,
 				160B11042070CA760092EF36 /* Supporting Files */,
-				160B10FB2070CA550092EF36 /* LaunchScreen.storyboard */,
 				160B10FE2070CA550092EF36 /* Info.plist */,
 			);
 			path = "Image Gallery";
@@ -71,6 +71,9 @@
 		160B11042070CA760092EF36 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				160B10FB2070CA550092EF36 /* LaunchScreen.storyboard */,
+				160B10F92070CA550092EF36 /* Assets.xcassets */,
+				160B10F22070CA550092EF36 /* AppDelegate.swift */,
 			);
 			path = "Supporting Files";
 			sourceTree = "<group>";
@@ -148,6 +151,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				160B11062070CAAA0092EF36 /* Utilities.swift in Sources */,
+				160B110C2070CFDF0092EF36 /* ImageGalleryCollectionViewCell.swift in Sources */,
 				160B10F52070CA550092EF36 /* ViewController.swift in Sources */,
 				160B10F32070CA550092EF36 /* AppDelegate.swift in Sources */,
 			);
