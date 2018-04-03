@@ -16,10 +16,16 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
         self.view.addGestureRecognizer(pinchGesture)
     }
     
+    @IBOutlet weak var collectionView: UICollectionView!
+    
     private var images = [UIImage]()
     private var imageRatios = [Double]()
     private var currImagesWidth = 400.0
     private var lastImageRatio: Double?
+    
+    var flowLayout: UICollectionViewFlowLayout? {
+        return collectionView?.collectionViewLayout as? UICollectionViewFlowLayout
+    }
     
     var imageFetcher: ImageFetcher!
 
@@ -33,7 +39,13 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
     }
     
     @objc func changeImagesWidth(_ sender: UIPinchGestureRecognizer) {
-        // todo: pinch gesture
+        currImagesWidth = currImagesWidth * Double(sender.scale)
+        if currImagesWidth < 100 {
+            currImagesWidth = 100
+        } else if currImagesWidth > 600 {
+            currImagesWidth = 600
+        }
+        flowLayout?.invalidateLayout()
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -88,7 +100,6 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
                         let imageHeight = image.size.height
                         let imageRatio = Double(imageWidth) / Double(imageHeight)
                         self.lastImageRatio = imageRatio
-//                        self.imageRatios.insert(imageRatio, at: destinationIndexPath.item)
                     }
                 }
                 

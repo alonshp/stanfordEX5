@@ -141,6 +141,7 @@
                     </view>
                     <connections>
                         <outlet property="ImageGalleryView" destination="Tqd-tN-CgI" id="E3S-j2-d4z"/>
+                        <outlet property="collectionView" destination="Tqd-tN-CgI" id="SIq-mx-0Zl"/>
                         <outlet property="imageGalleryView" destination="Tqd-tN-CgI" id="2ab-g2-awH"/>
                     </connections>
                 </viewController>
