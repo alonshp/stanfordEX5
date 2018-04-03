@@ -10,10 +10,16 @@ import UIKit
 
 class ViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDropDelegate, UICollectionViewDragDelegate, UICollectionViewDelegateFlowLayout {
     
+    override func viewDidLoad() {
+        // add pinch gesture
+        let pinchGesture = UIPinchGestureRecognizer.init(target: self, action: #selector(self.changeImagesWidth(_:)))
+        self.view.addGestureRecognizer(pinchGesture)
+    }
     
     private var images = [UIImage]()
     private var imageRatios = [Double]()
     private var currImagesWidth = 400.0
+    private var lastImageRatio: Double?
     
     var imageFetcher: ImageFetcher!
 
@@ -24,6 +30,10 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
             imageGalleryView.dragDelegate = self
             imageGalleryView.dropDelegate = self
         }
+    }
+    
+    @objc func changeImagesWidth(_ sender: UIPinchGestureRecognizer) {
+        // todo: pinch gesture
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -77,7 +87,8 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
                         let imageWidth = image.size.width
                         let imageHeight = image.size.height
                         let imageRatio = Double(imageWidth) / Double(imageHeight)
-                        self.imageRatios.insert(imageRatio, at: destinationIndexPath.item)
+                        self.lastImageRatio = imageRatio
+//                        self.imageRatios.insert(imageRatio, at: destinationIndexPath.item)
                     }
                 }
                 
@@ -98,6 +109,9 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
                 if let imageData = urlContents {
                     placeholderContext.commitInsertion(dataSourceUpdates: {insertionIndexPath in
                         self?.images.insert(UIImage(data: imageData)!, at: insertionIndexPath.item)
+                        if let lastImageRatio = self?.lastImageRatio {
+                            self?.imageRatios.insert(lastImageRatio, at: insertionIndexPath.item)
+                        }
                     })
                 } else {
                     placeholderContext.deletePlaceholder()
