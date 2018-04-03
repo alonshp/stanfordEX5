@@ -91,6 +91,21 @@ class ImageGalleryTableViewController: UITableViewController {
         }    
     }
     
+    // swipe to the other direction for undelete
+    override func tableView(_ tableView: UITableView, leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        if indexPath.section == 1 {
+            let contextualAction = UIContextualAction.init(style: .normal, title: "Undelete", handler: {_,_,_ in
+                let undeletedImageGallery = self.recentlyDeletedDocuments[indexPath.row]
+                self.recentlyDeletedDocuments.remove(at: indexPath.row)
+                tableView.deleteRows(at: [indexPath], with: .fade)
+                self.imageGalleryDocuments += [undeletedImageGallery]
+                tableView.reloadData()
+            })
+            return UISwipeActionsConfiguration.init(actions: [contextualAction])
+        }
+        return nil
+    }
+    
 
     /*
     // Override to support rearranging the table view.
