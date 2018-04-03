@@ -8,10 +8,12 @@
 
 import UIKit
 
-class ViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDropDelegate, UICollectionViewDragDelegate {
+class ViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDropDelegate, UICollectionViewDragDelegate, UICollectionViewDelegateFlowLayout {
     
     
     private var images = [UIImage]()
+    private var imageRatios = [Double]()
+    private var currImagesWidth = 400.0
     
     var imageFetcher: ImageFetcher!
 
@@ -36,6 +38,14 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
         return cell
     }
     
+    func collectionView(_ collectionView: UICollectionView,
+                        layout collectionViewLayout: UICollectionViewLayout,
+                        sizeForItemAt indexPath: IndexPath) -> CGSize {
+        let aspectRatio = imageRatios[indexPath.item]
+        let imageHeight = currImagesWidth / aspectRatio
+        return CGSize(width: currImagesWidth, height: imageHeight)
+    }
+    
     
     func collectionView(_ collectionView: UICollectionView, performDropWith coordinator: UICollectionViewDropCoordinator) {
         let destinationIndexPath = coordinator.destinationIndexPath ?? IndexPath(item: 0, section: 0)
@@ -43,9 +53,12 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
             // item is already at the collection view
             if let sourceIndexPath = item.sourceIndexPath {
                 if let image = item.dragItem.localObject as? UIImage {
+                    let imageRatio = imageRatios[sourceIndexPath.item]
                     collectionView.performBatchUpdates({
                         images.remove(at: sourceIndexPath.item)
+                        imageRatios.remove(at: sourceIndexPath.item)
                         images.insert(image, at: destinationIndexPath.item)
+                        imageRatios.insert(imageRatio, at: destinationIndexPath.item)
                         collectionView.deleteItems(at: [sourceIndexPath])
                         collectionView.insertItems(at: [destinationIndexPath])
                     })
@@ -59,7 +72,13 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
                 
                 // load image
                 item.dragItem.itemProvider.loadObject(ofClass: UIImage.self) { (provider, error) in
-                    // TODO: aspect ratio
+                    // get aspect ratio
+                    if let image = provider as? UIImage {
+                        let imageWidth = image.size.width
+                        let imageHeight = image.size.height
+                        let imageRatio = Double(imageWidth) / Double(imageHeight)
+                        self.imageRatios.insert(imageRatio, at: destinationIndexPath.item)
+                    }
                 }
                 
                 // load image url
