@@ -14,6 +14,7 @@
 		160B10FD2070CA550092EF36 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 160B10FB2070CA550092EF36 /* LaunchScreen.storyboard */; };
 		160B11062070CAAA0092EF36 /* Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 160B11052070CAAA0092EF36 /* Utilities.swift */; };
 		160B110C2070CFDF0092EF36 /* ImageGalleryCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 160B110B2070CFDF0092EF36 /* ImageGalleryCollectionViewCell.swift */; };
+		160B110E2071278E0092EF36 /* ImageGalleryTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 160B110D2071278E0092EF36 /* ImageGalleryTableViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -26,6 +27,7 @@
 		160B10FE2070CA550092EF36 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		160B11052070CAAA0092EF36 /* Utilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utilities.swift; sourceTree = "<group>"; };
 		160B110B2070CFDF0092EF36 /* ImageGalleryCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageGalleryCollectionViewCell.swift; sourceTree = "<group>"; };
+		160B110D2071278E0092EF36 /* ImageGalleryTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageGalleryTableViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -60,6 +62,7 @@
 			children = (
 				160B110B2070CFDF0092EF36 /* ImageGalleryCollectionViewCell.swift */,
 				160B10F42070CA550092EF36 /* ViewController.swift */,
+				160B110D2071278E0092EF36 /* ImageGalleryTableViewController.swift */,
 				160B10F62070CA550092EF36 /* Main.storyboard */,
 				160B11052070CAAA0092EF36 /* Utilities.swift */,
 				160B11042070CA760092EF36 /* Supporting Files */,
@@ -150,6 +153,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				160B110E2071278E0092EF36 /* ImageGalleryTableViewController.swift in Sources */,
 				160B11062070CAAA0092EF36 /* Utilities.swift in Sources */,
 				160B110C2070CFDF0092EF36 /* ImageGalleryCollectionViewCell.swift in Sources */,
 				160B10F52070CA550092EF36 /* ViewController.swift in Sources */,
