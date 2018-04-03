@@ -18,6 +18,10 @@ class ImageGalleryTableViewController: UITableViewController {
 
         // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
         // self.navigationItem.rightBarButtonItem = self.editButtonItem
+        
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(self.doubleTapToEdit(_:)))
+        tapGesture.numberOfTapsRequired = 2
+        tableView.addGestureRecognizer(tapGesture)
     }
 
     override func didReceiveMemoryWarning() {
@@ -28,6 +32,19 @@ class ImageGalleryTableViewController: UITableViewController {
     var imageGalleryDocuments = ["template1", "template2"]
     var recentlyDeletedDocuments = ["deleted1", "deleted2"]
 
+    @objc func doubleTapToEdit(_ sender: UITapGestureRecognizer){
+        if sender.state == UIGestureRecognizerState.ended {
+            let tapLocation = sender.location(in: self.tableView)
+            if let tapIndexPath = self.tableView.indexPathForRow(at: tapLocation) {
+                if let tappedCell = self.tableView.cellForRow(at: tapIndexPath) as? EditTableViewCell {
+                    tappedCell.textField.isEnabled = true
+                }
+            }
+        }
+    }
+    
+    
+    
     // MARK: - Table view data source
 
     override func numberOfSections(in tableView: UITableView) -> Int {
@@ -41,10 +58,27 @@ class ImageGalleryTableViewController: UITableViewController {
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "documentCell", for: indexPath)
-        if indexPath.section == 0 {
-        cell.textLabel?.text = imageGalleryDocuments[indexPath.row]
-        } else {
-            cell.textLabel?.text = recentlyDeletedDocuments[indexPath.row]
+        if let editCell = cell as? EditTableViewCell {
+            if indexPath.section == 0 {
+                editCell.textField.isEnabled = false
+                editCell.textField.text = imageGalleryDocuments[indexPath.row]
+                editCell.resignationHandler = {
+                    if let text = editCell.textField.text {
+                        self.imageGalleryDocuments[indexPath.row] = text
+                        tableView.reloadData()
+                    }
+                }
+            } else {
+                editCell.textField.isEnabled = false
+                editCell.textField.text = recentlyDeletedDocuments[indexPath.row]
+                editCell.resignationHandler = {
+                    if let text = editCell.textField.text {
+                        self.recentlyDeletedDocuments[indexPath.row] = text
+                        tableView.reloadData()
+                    }
+                }
+            }
+
         }
 
         return cell
