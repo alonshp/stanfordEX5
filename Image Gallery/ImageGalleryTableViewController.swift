@@ -29,6 +29,13 @@ class ImageGalleryTableViewController: UITableViewController, UISplitViewControl
         // Dispose of any resources that can be recreated.
     }
     
+    override func viewWillLayoutSubviews() {
+        super.viewWillLayoutSubviews()
+        if splitViewController?.preferredDisplayMode != UISplitViewControllerDisplayMode.primaryOverlay {
+            splitViewController?.preferredDisplayMode = .primaryOverlay
+        }
+    }
+    
     var imageGalleryDocuments = ["template1", "template2"]
     var recentlyDeletedDocuments = ["deleted1", "deleted2"]
 

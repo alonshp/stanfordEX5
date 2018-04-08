@@ -14,6 +14,7 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
         // add pinch gesture
         let pinchGesture = UIPinchGestureRecognizer.init(target: self, action: #selector(self.changeImagesWidth(_:)))
         self.view.addGestureRecognizer(pinchGesture)
+        
     }
     
     @IBOutlet weak var collectionView: UICollectionView!

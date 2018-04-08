@@ -72,7 +72,7 @@
                         </barButtonItem>
                     </navigationItem>
                     <connections>
-                        <segue destination="BYZ-38-t0r" kind="showDetail" identifier="Choose Image Gallery" id="1v5-YW-db6"/>
+                        <segue destination="Hbc-QH-trB" kind="showDetail" identifier="Choose Image Gallery" id="P1I-uc-6MI"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="epd-4d-AY6" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -88,7 +88,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="Tqd-tN-CgI">
-                                <rect key="frame" x="0.0" y="64" width="414" height="672"/>
+                                <rect key="frame" x="0.0" y="64" width="414" height="628"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="10" id="c43-5j-WMm">
                                     <size key="itemSize" width="400" height="200"/>
@@ -147,7 +147,9 @@
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
+                    <toolbarItems/>
                     <navigationItem key="navigationItem" id="Cpb-Qy-7uY"/>
+                    <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
                     <connections>
                         <outlet property="ImageGalleryView" destination="Tqd-tN-CgI" id="E3S-j2-d4z"/>
                         <outlet property="collectionView" destination="Tqd-tN-CgI" id="SIq-mx-0Zl"/>
@@ -225,6 +227,6 @@
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
-        <segue reference="1v5-YW-db6"/>
+        <segue reference="P1I-uc-6MI"/>
     </inferredMetricsTieBreakers>
 </document>
