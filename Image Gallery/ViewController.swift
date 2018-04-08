@@ -159,5 +159,27 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
             return session.canLoadObjects(ofClass: UIImage.self) && session.canLoadObjects(ofClass: NSURL.self)
         }
     }
+
+    // MARK: - Navigation
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if let imageVC = segue.destination.content as? ImageViewController {
+            if let cell = sender as? ImageGalleryCollectionViewCell {
+                imageVC.image = cell.imageView.image
+            }
+            
+        }
+    }
+    
+}
+
+extension UIViewController {
+    var content: UIViewController {
+        if let navcon = self as? UINavigationController {
+            return navcon.visibleViewController ?? self
+        } else {
+            return self
+        }
+    }
 }
 

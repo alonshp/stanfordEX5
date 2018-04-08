@@ -11,9 +11,4 @@ import UIKit
 class ImageGalleryCollectionViewCell: UICollectionViewCell {
     
     @IBOutlet weak var imageView: UIImageView!
-    
-    @IBOutlet weak var cellHeight: NSLayoutConstraint!
-    
-    @IBOutlet weak var cellWidth: NSLayoutConstraint!
-    
 }
