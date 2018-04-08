@@ -132,9 +132,18 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
                     })
                 } else {
                     placeholderContext.deletePlaceholder()
+                    self?.showAlertWhenImageUnableToFetch()
                 }
             }
         }
+    }
+    
+    private func showAlertWhenImageUnableToFetch(){
+        let alertController = UIAlertController(title: "Sorry...", message:
+            "Try another image", preferredStyle: UIAlertControllerStyle.alert)
+        alertController.addAction(UIAlertAction(title: "Dismiss", style: UIAlertActionStyle.default,handler: nil))
+        
+        self.present(alertController, animated: true, completion: nil)
     }
     
     func collectionView(_ collectionView: UICollectionView, dropSessionDidUpdate session: UIDropSession, withDestinationIndexPath destinationIndexPath: IndexPath?) -> UICollectionViewDropProposal {
