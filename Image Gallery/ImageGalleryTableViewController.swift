@@ -178,10 +178,12 @@ class ImageGalleryTableViewController: UITableViewController, UISplitViewControl
     
     // MARK: - Navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if let imageGalleryController = segue.destination as? ViewController {
-            if let cell = sender as? EditTableViewCell {
-                imageGalleryController.title = cell.textField.text!
-                lastSeguedToImageGalleryViewController[cell.textField.text!] = imageGalleryController
+        if let navigationController = segue.destination as? UINavigationController {
+            if let imageGalleryController = navigationController.childViewControllers[0] as? ViewController {
+                if let cell = sender as? EditTableViewCell {
+                    imageGalleryController.title = cell.textField.text!
+                    lastSeguedToImageGalleryViewController[cell.textField.text!] = imageGalleryController
+                }
             }
         }
     }
