@@ -26,5 +26,4 @@ class EditTableViewCell: UITableViewCell, UITextFieldDelegate {
         textField.resignFirstResponder()
         return true
     }
-
 }

@@ -8,7 +8,7 @@
 
 import UIKit
 
-class ImageGalleryTableViewController: UITableViewController {
+class ImageGalleryTableViewController: UITableViewController, UISplitViewControllerDelegate {
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -85,7 +85,7 @@ class ImageGalleryTableViewController: UITableViewController {
     }
     
     @IBAction func newImageGallery(_ sender: UIBarButtonItem) {
-        imageGalleryDocuments += ["Untitled".madeUnique(withRespectTo: imageGalleryDocuments)]
+        imageGalleryDocuments += ["Untitled".madeUnique(withRespectTo: imageGalleryDocuments + recentlyDeletedDocuments)]
         tableView.reloadData()
     }
     
@@ -111,6 +111,7 @@ class ImageGalleryTableViewController: UITableViewController {
         if editingStyle == .delete {
             // Delete the row from the data source
             if indexPath.section == 1 {
+                lastSeguedToImageGalleryViewController.removeValue(forKey: recentlyDeletedDocuments[indexPath.row])
                 recentlyDeletedDocuments.remove(at: indexPath.row)
                 tableView.deleteRows(at: [indexPath], with: .fade)
             } else {
@@ -140,30 +141,41 @@ class ImageGalleryTableViewController: UITableViewController {
         return nil
     }
     
-
-    /*
-    // Override to support rearranging the table view.
-    override func tableView(_ tableView: UITableView, moveRowAt fromIndexPath: IndexPath, to: IndexPath) {
-
+    private var splitViewDetailViewController: ViewController? {
+        return splitViewController?.viewControllers.last as? ViewController
     }
-    */
-
-    /*
-    // Override to support conditional rearranging of the table view.
-    override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the item to be re-orderable.
-        return true
+    
+    private var lastSeguedToImageGalleryViewController = [String : ViewController]()
+    private var lastRowSelected: Int?
+    
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        if indexPath.section == 0 {
+            if let lastImageGalleryController = lastSeguedToImageGalleryViewController[imageGalleryDocuments[indexPath.row]] {
+                if let splitViewController = splitViewDetailViewController {
+                    if let lastRowSelected = lastRowSelected {
+                        lastSeguedToImageGalleryViewController[imageGalleryDocuments[lastRowSelected]] = splitViewController
+                    }
+                    splitViewController.reloadData(
+                        images: lastImageGalleryController.images,
+                        imageRatios: lastImageGalleryController.imageRatios)
+                } else {
+                    navigationController?.pushViewController(lastImageGalleryController, animated: true)
+                }
+            } else {
+                performSegue(withIdentifier: "Choose Image Gallery", sender: tableView.cellForRow(at: indexPath))
+            }
+            lastRowSelected = indexPath.row
+        }
     }
-    */
 
-    /*
+    
     // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
+        if let imageGalleryController = segue.destination as? ViewController {
+            if let cell = sender as? EditTableViewCell {
+                imageGalleryController.title = cell.textField.text!
+                lastSeguedToImageGalleryViewController[cell.textField.text!] = imageGalleryController
+            }
+        }
     }
-    */
-
 }

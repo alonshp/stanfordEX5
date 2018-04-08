@@ -71,10 +71,13 @@
                             </connections>
                         </barButtonItem>
                     </navigationItem>
+                    <connections>
+                        <segue destination="BYZ-38-t0r" kind="showDetail" identifier="Choose Image Gallery" id="1v5-YW-db6"/>
+                    </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="epd-4d-AY6" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="28.985507246376812" y="-280.43478260869568"/>
+            <point key="canvasLocation" x="29" y="-438"/>
         </scene>
         <!--View Controller-->
         <scene sceneID="tne-QT-ifu">
@@ -200,7 +203,7 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="iUK-Bw-Fkf" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-962" y="-280"/>
+            <point key="canvasLocation" x="-963" y="-438"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="vJ3-uy-Bw5">
@@ -221,4 +224,7 @@
             <point key="canvasLocation" x="-962.31884057971024" y="430.43478260869568"/>
         </scene>
     </scenes>
+    <inferredMetricsTieBreakers>
+        <segue reference="1v5-YW-db6"/>
+    </inferredMetricsTieBreakers>
 </document>

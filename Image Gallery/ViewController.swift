@@ -18,10 +18,16 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
     
     @IBOutlet weak var collectionView: UICollectionView!
     
-    private var images = [UIImage]()
-    private var imageRatios = [Double]()
+    var images = [UIImage]()
+    var imageRatios = [Double]()
     private var currImagesWidth = 400.0
     private var lastImageRatio: Double?
+    
+    func reloadData(images: [UIImage], imageRatios: [Double]) {
+        self.images = images
+        self.imageRatios = imageRatios
+        collectionView.reloadData()
+    }
     
     var flowLayout: UICollectionViewFlowLayout? {
         return collectionView?.collectionViewLayout as? UICollectionViewFlowLayout
