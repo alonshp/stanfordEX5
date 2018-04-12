@@ -107,17 +107,23 @@
                                                 <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="bZ7-8m-rDb">
                                                     <rect key="frame" x="8" y="8" width="384" height="184"/>
                                                 </imageView>
+                                                <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="Ahn-OC-Ilc">
+                                                    <rect key="frame" x="190" y="90" width="20" height="20"/>
+                                                </activityIndicatorView>
                                             </subviews>
                                         </view>
                                         <constraints>
                                             <constraint firstItem="bZ7-8m-rDb" firstAttribute="top" secondItem="HEv-hr-HJo" secondAttribute="topMargin" id="YIr-OC-WzT"/>
                                             <constraint firstItem="bZ7-8m-rDb" firstAttribute="leading" secondItem="HEv-hr-HJo" secondAttribute="leadingMargin" id="btf-R2-Yra"/>
+                                            <constraint firstItem="Ahn-OC-Ilc" firstAttribute="centerY" secondItem="HEv-hr-HJo" secondAttribute="centerY" id="d6C-Qy-kz2"/>
                                             <constraint firstItem="bZ7-8m-rDb" firstAttribute="bottom" secondItem="HEv-hr-HJo" secondAttribute="bottomMargin" id="kwU-Hz-MdC"/>
+                                            <constraint firstItem="Ahn-OC-Ilc" firstAttribute="centerX" secondItem="HEv-hr-HJo" secondAttribute="centerX" id="mKA-i6-KZP"/>
                                             <constraint firstItem="bZ7-8m-rDb" firstAttribute="trailing" secondItem="HEv-hr-HJo" secondAttribute="trailingMargin" id="zOL-Nh-m0m"/>
                                         </constraints>
                                         <size key="customSize" width="400" height="200"/>
                                         <connections>
                                             <outlet property="imageView" destination="bZ7-8m-rDb" id="pOg-UV-abT"/>
+                                            <outlet property="spinner" destination="Ahn-OC-Ilc" id="T8i-HM-s5m"/>
                                             <segue destination="hxz-Mf-Ff8" kind="show" id="fB6-z3-7BV"/>
                                         </connections>
                                     </collectionViewCell>

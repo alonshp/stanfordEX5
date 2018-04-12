@@ -69,21 +69,26 @@ class ImageGalleryViewController: UIViewController, UICollectionViewDelegate, UI
                 let imageURL = imageGalleryData.imageURL
                 let imageRatio = imageGalleryData.imageRatio
                 if mapImageURLToUIImage[imageURL] != nil {
+                    imageCell.spinner.isHidden = true
                     imageCell.imageView.image = mapImageURLToUIImage[imageURL]
                 } else {
                     // fetch Image when load new gallery
                     imageCell.imageView.image = nil
-                    fetchImage(url: imageURL, position: indexPath.item, imageRatio: imageRatio)
+                    imageCell.spinner.isHidden = false
+                    imageCell.spinner.startAnimating()
+                    imageCell.spinner.hidesWhenStopped = true
+                    fetchImage(url: imageURL, position: indexPath.item, imageRatio: imageRatio, spinner: imageCell.spinner)
                 }
             }
         }
         return cell
     }
     
-    private func fetchImage(url: URL, position: Int, imageRatio: Double){
+    private func fetchImage(url: URL, position: Int, imageRatio: Double, spinner: UIActivityIndicatorView ){
         DispatchQueue.global(qos: .userInitiated).async { [weak self] in
             let urlContents = try? Data(contentsOf: url)
             DispatchQueue.main.async {
+                spinner.stopAnimating()
                 if let imageData = urlContents {
                     self?.mapImageURLToUIImage[url] = UIImage(data: imageData)
                     self?.collectionView.reloadData()
