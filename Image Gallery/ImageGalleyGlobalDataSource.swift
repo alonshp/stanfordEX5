@@ -12,7 +12,7 @@ class ImageGalleyGlobalDataSource: NSObject {
     
     static let shared = ImageGalleyGlobalDataSource()
     
-    var galleries = [ImageGalleryData]()
+    private var galleriesMap = [String : ImageGalleryData]()
     
     // Initialization
     private override init() {
@@ -20,20 +20,37 @@ class ImageGalleyGlobalDataSource: NSObject {
     }
     
     public func createGallery(name: String) {
-        //TODO
+        let newGallery = ImageGalleryData(images: [], name: name)
+        galleriesMap[name] = newGallery
     }
     
-    public func addImageToGallery(imageUrl: URL, galleryName:String, imageRatio: Double) {
-        //TODO
+    public func addImageToGallery(name:String, imageData: ImageData, position: Int) {
+        galleriesMap[name]?.images.insert(imageData, at: position)
     }
     
     public func changeGalleryName(from: String, to: String) {
-        //TODO
+        if let galleryIndex = galleriesMap.index(forKey: from){
+            galleriesMap[to] = galleriesMap[from]
+            galleriesMap.remove(at: galleryIndex)
+            galleriesMap[from]?.name = to
+        }
+        
     }
     
     public func getGalleryForName(name: String) -> ImageGalleryData? {
-        //TODO
-        return nil //temp
+        if let imageGallery = galleriesMap[name] {
+            return imageGallery
+        } else {
+            return nil
+        }
+    }
+    
+    public func moveImageData(from: Int, to: Int, galleryName: String){
+        if let imageData = galleriesMap[galleryName]?.images[from] {
+            galleriesMap[galleryName]?.images.remove(at: from)
+            galleriesMap[galleryName]?.images.insert(imageData, at: to)
+        }
+        
     }
     
     private func saveGalleriesToDisk() {

@@ -79,10 +79,10 @@
             </objects>
             <point key="canvasLocation" x="29" y="-438"/>
         </scene>
-        <!--View Controller-->
+        <!--Image Gallery View Controller-->
         <scene sceneID="tne-QT-ifu">
             <objects>
-                <viewController id="BYZ-38-t0r" customClass="ViewController" customModule="Image_Gallery" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="BYZ-38-t0r" customClass="ImageGalleryViewController" customModule="Image_Gallery" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -160,10 +160,10 @@
             </objects>
             <point key="canvasLocation" x="29" y="430"/>
         </scene>
-        <!--Image View Controller-->
+        <!--Image Scroll View Controller-->
         <scene sceneID="UuH-gq-Qhs">
             <objects>
-                <viewController id="hxz-Mf-Ff8" customClass="ImageViewController" customModule="Image_Gallery" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="hxz-Mf-Ff8" customClass="ImageScrollViewController" customModule="Image_Gallery" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="sLe-Hg-3Px">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>

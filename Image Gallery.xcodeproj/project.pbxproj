@@ -8,7 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		160B10F32070CA550092EF36 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 160B10F22070CA550092EF36 /* AppDelegate.swift */; };
-		160B10F52070CA550092EF36 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 160B10F42070CA550092EF36 /* ViewController.swift */; };
+		160B10F52070CA550092EF36 /* ImageGalleryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 160B10F42070CA550092EF36 /* ImageGalleryViewController.swift */; };
 		160B10F82070CA550092EF36 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 160B10F62070CA550092EF36 /* Main.storyboard */; };
 		160B10FA2070CA550092EF36 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 160B10F92070CA550092EF36 /* Assets.xcassets */; };
 		160B10FD2070CA550092EF36 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 160B10FB2070CA550092EF36 /* LaunchScreen.storyboard */; };
@@ -24,7 +24,7 @@
 /* Begin PBXFileReference section */
 		160B10EF2070CA550092EF36 /* Image Gallery.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Image Gallery.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		160B10F22070CA550092EF36 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		160B10F42070CA550092EF36 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		160B10F42070CA550092EF36 /* ImageGalleryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageGalleryViewController.swift; sourceTree = "<group>"; };
 		160B10F72070CA550092EF36 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		160B10F92070CA550092EF36 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		160B10FC2070CA550092EF36 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -69,16 +69,16 @@
 			isa = PBXGroup;
 			children = (
 				160B110B2070CFDF0092EF36 /* ImageGalleryCollectionViewCell.swift */,
-				160B10F42070CA550092EF36 /* ViewController.swift */,
+				160B10F42070CA550092EF36 /* ImageGalleryViewController.swift */,
 				160B110D2071278E0092EF36 /* ImageGalleryTableViewController.swift */,
 				164EFEAE207CE85D00404DB6 /* ImageGalleryData.swift */,
 				160B11102073D0C00092EF36 /* EditTableViewCell.swift */,
 				160B10F62070CA550092EF36 /* Main.storyboard */,
 				160B11122079FC1B0092EF36 /* ImageScrollViewController.swift */,
 				160B11052070CAAA0092EF36 /* Utilities.swift */,
+				1676C1CA207CF2EA00065ED2 /* ImageGalleyGlobalDataSource.swift */,
 				160B11042070CA760092EF36 /* Supporting Files */,
 				160B10FE2070CA550092EF36 /* Info.plist */,
-				1676C1CA207CF2EA00065ED2 /* ImageGalleyGlobalDataSource.swift */,
 			);
 			path = "Image Gallery";
 			sourceTree = "<group>";
@@ -171,7 +171,7 @@
 				160B11132079FC1B0092EF36 /* ImageScrollViewController.swift in Sources */,
 				1676C1CB207CF2EA00065ED2 /* ImageGalleyGlobalDataSource.swift in Sources */,
 				160B11112073D0C00092EF36 /* EditTableViewCell.swift in Sources */,
-				160B10F52070CA550092EF36 /* ViewController.swift in Sources */,
+				160B10F52070CA550092EF36 /* ImageGalleryViewController.swift in Sources */,
 				164EFEAF207CE85D00404DB6 /* ImageGalleryData.swift in Sources */,
 				160B10F32070CA550092EF36 /* AppDelegate.swift in Sources */,
 			);

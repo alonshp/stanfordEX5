@@ -12,12 +12,6 @@ class ImageGalleryTableViewController: UITableViewController, UISplitViewControl
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Uncomment the following line to preserve selection between presentations
-        // self.clearsSelectionOnViewWillAppear = false
-
-        // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-        // self.navigationItem.rightBarButtonItem = self.editButtonItem
         
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(self.doubleTapToEdit(_:)))
         tapGesture.numberOfTapsRequired = 2
@@ -36,7 +30,7 @@ class ImageGalleryTableViewController: UITableViewController, UISplitViewControl
         }
     }
     
-    var imageGalleryDocuments = ["template1", "template2"]
+    var imageGalleryDocuments = [String]()
     var recentlyDeletedDocuments = ["deleted1", "deleted2"]
 
     @objc func doubleTapToEdit(_ sender: UITapGestureRecognizer){
@@ -71,6 +65,7 @@ class ImageGalleryTableViewController: UITableViewController, UISplitViewControl
                 editCell.textField.text = imageGalleryDocuments[indexPath.row]
                 editCell.resignationHandler = {
                     if let text = editCell.textField.text {
+                        ImageGalleyGlobalDataSource.shared.changeGalleryName(from: self.imageGalleryDocuments[indexPath.row], to: text)
                         self.imageGalleryDocuments[indexPath.row] = text
                         tableView.reloadData()
                     }
@@ -80,6 +75,7 @@ class ImageGalleryTableViewController: UITableViewController, UISplitViewControl
                 editCell.textField.text = recentlyDeletedDocuments[indexPath.row]
                 editCell.resignationHandler = {
                     if let text = editCell.textField.text {
+                        ImageGalleyGlobalDataSource.shared.changeGalleryName(from: self.recentlyDeletedDocuments[indexPath.row], to: text)
                         self.recentlyDeletedDocuments[indexPath.row] = text
                         tableView.reloadData()
                     }
@@ -92,12 +88,15 @@ class ImageGalleryTableViewController: UITableViewController, UISplitViewControl
     }
     
     @IBAction func newImageGallery(_ sender: UIBarButtonItem) {
-        imageGalleryDocuments += ["Untitled".madeUnique(withRespectTo: imageGalleryDocuments + recentlyDeletedDocuments)]
+        // add image gallery
+        let galleryName = "Untitled".madeUnique(withRespectTo: imageGalleryDocuments + recentlyDeletedDocuments)
+        imageGalleryDocuments += [galleryName]
+        ImageGalleyGlobalDataSource.shared.createGallery(name: galleryName)
         tableView.reloadData()
     }
     
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        return section == 0 ? "" : "Recently Deleted"
+        return section == 0 ? "Image Galleries" : "Recently Deleted"
     }
 
     
@@ -118,7 +117,6 @@ class ImageGalleryTableViewController: UITableViewController, UISplitViewControl
         if editingStyle == .delete {
             // Delete the row from the data source
             if indexPath.section == 1 {
-                lastSeguedToImageGalleryViewController.removeValue(forKey: recentlyDeletedDocuments[indexPath.row])
                 recentlyDeletedDocuments.remove(at: indexPath.row)
                 tableView.deleteRows(at: [indexPath], with: .fade)
             } else {
@@ -148,30 +146,15 @@ class ImageGalleryTableViewController: UITableViewController, UISplitViewControl
         return nil
     }
     
-    private var splitViewDetailViewController: ViewController? {
-        return splitViewController?.viewControllers.last as? ViewController
+    private var splitViewDetailViewController: ImageGalleryViewController? {
+        return splitViewController?.viewControllers.last as? ImageGalleryViewController
     }
     
-    private var lastSeguedToImageGalleryViewController = [String : ViewController]()
-    private var lastRowSelected: Int?
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if indexPath.section == 0 {
-            if let lastImageGalleryController = lastSeguedToImageGalleryViewController[imageGalleryDocuments[indexPath.row]] {
-                if let splitViewController = splitViewDetailViewController {
-                    if let lastRowSelected = lastRowSelected {
-                        lastSeguedToImageGalleryViewController[imageGalleryDocuments[lastRowSelected]] = splitViewController
-                    }
-                    splitViewController.reloadData(
-                        images: lastImageGalleryController.images,
-                        imageRatios: lastImageGalleryController.imageRatios)
-                } else {
-                    navigationController?.pushViewController(lastImageGalleryController, animated: true)
-                }
-            } else {
-                performSegue(withIdentifier: "Choose Image Gallery", sender: tableView.cellForRow(at: indexPath))
-            }
-            lastRowSelected = indexPath.row
+            tableView.cellForRow(at: indexPath)?.tag = indexPath.item
+            performSegue(withIdentifier: "Choose Image Gallery", sender: tableView.cellForRow(at: indexPath))
         }
     }
 
@@ -179,10 +162,11 @@ class ImageGalleryTableViewController: UITableViewController, UISplitViewControl
     // MARK: - Navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if let navigationController = segue.destination as? UINavigationController {
-            if let imageGalleryController = navigationController.childViewControllers[0] as? ViewController {
+            if let imageGalleryController = navigationController.childViewControllers[0] as? ImageGalleryViewController {
                 if let cell = sender as? EditTableViewCell {
-                    imageGalleryController.title = cell.textField.text!
-                    lastSeguedToImageGalleryViewController[cell.textField.text!] = imageGalleryController
+                    let galleryName = imageGalleryDocuments[cell.tag]
+                    imageGalleryController.title = galleryName
+                    imageGalleryController.galleryName = galleryName
                 }
             }
         }

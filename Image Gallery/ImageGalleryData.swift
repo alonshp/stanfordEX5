@@ -9,13 +9,21 @@
 import Foundation
 
 struct ImageGalleryData {
-    var imageURLs = [URL]()
-    var imageRatios = [Double]()
+    var images = [ImageData]()
     var name:String
     
-    init(imageURLs : [URL], imageRatios : [Double], name: String) {
-        self.imageURLs = imageURLs
-        self.imageRatios = imageRatios
+    init(images : [ImageData], name: String) {
+        self.images = images
         self.name = name
+    }
+}
+
+struct ImageData {
+    var imageURL:URL
+    var imageRatio:Double
+    
+    init(imageURL: URL, imageRatio: Double) {
+        self.imageURL = imageURL
+        self.imageRatio = imageRatio
     }
 }

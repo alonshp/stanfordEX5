@@ -8,27 +8,22 @@
 
 import UIKit
 
-class ViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDropDelegate, UICollectionViewDragDelegate, UICollectionViewDelegateFlowLayout {
+class ImageGalleryViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDropDelegate, UICollectionViewDragDelegate, UICollectionViewDelegateFlowLayout {
     
     override func viewDidLoad() {
         // add pinch gesture
         let pinchGesture = UIPinchGestureRecognizer.init(target: self, action: #selector(self.changeImagesWidth(_:)))
         self.view.addGestureRecognizer(pinchGesture)
-        
     }
     
     @IBOutlet weak var collectionView: UICollectionView!
     
-    var images = [UIImage]()
-    var imageRatios = [Double]()
+    var galleryName: String?
+    var mapImageURLToUIImage = [URL : UIImage]()
+    
     private var currImagesWidth = 400.0
     private var lastImageRatio: Double?
     
-    func reloadData(images: [UIImage], imageRatios: [Double]) {
-        self.images = images
-        self.imageRatios = imageRatios
-        collectionView.reloadData()
-    }
     
     var flowLayout: UICollectionViewFlowLayout? {
         return collectionView?.collectionViewLayout as? UICollectionViewFlowLayout
@@ -56,43 +51,70 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return images.count
+        guard galleryName != nil else {
+            return 0
+        }
+        if let imageGalleryData = ImageGalleyGlobalDataSource.shared.getGalleryForName(name: galleryName!) {
+            return imageGalleryData.images.count
+        } else {
+            return 0
+        }
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "imageCell", for: indexPath)
         if let imageCell = cell as? ImageGalleryCollectionViewCell {
-            imageCell.imageView.image = images[indexPath.item]
+
+            if let imageGalleryData = ImageGalleyGlobalDataSource.shared.getGalleryForName(name: galleryName!)?.images[indexPath.item] {
+                let imageURL = imageGalleryData.imageURL
+                let imageRatio = imageGalleryData.imageRatio
+                if mapImageURLToUIImage[imageURL] != nil {
+                    imageCell.imageView.image = mapImageURLToUIImage[imageURL]
+                } else {
+                    // fetch Image when load new gallery
+                    fetchImage(url: imageURL, position: indexPath.item, imageRatio: imageRatio)
+                }
+            }
         }
         return cell
+    }
+    
+    private func fetchImage(url: URL, position: Int, imageRatio: Double){
+        DispatchQueue.global(qos: .userInitiated).async { [weak self] in
+            let urlContents = try? Data(contentsOf: url)
+            DispatchQueue.main.async {
+                if let imageData = urlContents {
+                    self?.mapImageURLToUIImage[url] = UIImage(data: imageData)
+                    self?.collectionView.reloadData()
+                } else {
+                    self?.showAlertWhenImageUnableToFetch()
+                }
+            }
+        }
     }
     
     func collectionView(_ collectionView: UICollectionView,
                         layout collectionViewLayout: UICollectionViewLayout,
                         sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let aspectRatio = imageRatios[indexPath.item]
-        let imageHeight = currImagesWidth / aspectRatio
+        let aspectRatio = ImageGalleyGlobalDataSource.shared.getGalleryForName(name: galleryName!)?.images[indexPath.item].imageRatio
+        let imageHeight = currImagesWidth / aspectRatio!
         return CGSize(width: currImagesWidth, height: imageHeight)
     }
     
     
     func collectionView(_ collectionView: UICollectionView, performDropWith coordinator: UICollectionViewDropCoordinator) {
+        guard galleryName != nil else {
+            return
+        }
         let destinationIndexPath = coordinator.destinationIndexPath ?? IndexPath(item: 0, section: 0)
         for item in coordinator.items {
-            // item is already at the collection view
             if let sourceIndexPath = item.sourceIndexPath {
-                if let image = item.dragItem.localObject as? UIImage {
-                    let imageRatio = imageRatios[sourceIndexPath.item]
-                    collectionView.performBatchUpdates({
-                        images.remove(at: sourceIndexPath.item)
-                        imageRatios.remove(at: sourceIndexPath.item)
-                        images.insert(image, at: destinationIndexPath.item)
-                        imageRatios.insert(imageRatio, at: destinationIndexPath.item)
-                        collectionView.deleteItems(at: [sourceIndexPath])
-                        collectionView.insertItems(at: [destinationIndexPath])
-                    })
-                    coordinator.drop(item.dragItem, toItemAt: destinationIndexPath)
-                }
+                collectionView.performBatchUpdates({
+                    ImageGalleyGlobalDataSource.shared.moveImageData(from: sourceIndexPath.item, to: destinationIndexPath.item, galleryName: galleryName!)
+                    collectionView.deleteItems(at: [sourceIndexPath])
+                    collectionView.insertItems(at: [destinationIndexPath])
+                })
+                coordinator.drop(item.dragItem, toItemAt: destinationIndexPath)
                 // new item
             } else {
                 let placeholderContext = coordinator.drop(
@@ -113,22 +135,23 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
                 // load image url
                 item.dragItem.itemProvider.loadObject(ofClass: NSURL.self) { (provider, error) in
                     if let url = provider as? URL {
-                        self.fetchImage(url: url.imageURL, placeholderContext: placeholderContext)
+                        self.fetchImageAndUpdatePlaceholder(url: url.imageURL, placeholderContext: placeholderContext)
                     }
                 }
             }
         }
     }
     
-    private func fetchImage(url: URL, placeholderContext: UICollectionViewDropPlaceholderContext) {
+    private func fetchImageAndUpdatePlaceholder(url: URL, placeholderContext: UICollectionViewDropPlaceholderContext) {
         DispatchQueue.global(qos: .userInitiated).async { [weak self] in
             let urlContents = try? Data(contentsOf: url)
             DispatchQueue.main.async {
-                if let imageData = urlContents {
+                if let imageData = urlContents, let lastImageRatio = self?.lastImageRatio {
                     placeholderContext.commitInsertion(dataSourceUpdates: {insertionIndexPath in
-                        self?.images.insert(UIImage(data: imageData)!, at: insertionIndexPath.item)
-                        if let lastImageRatio = self?.lastImageRatio {
-                            self?.imageRatios.insert(lastImageRatio, at: insertionIndexPath.item)
+                        if let galleryName = self?.galleryName {
+                            ImageGalleyGlobalDataSource.shared.addImageToGallery(name: galleryName , imageData: ImageData.init(imageURL: url, imageRatio: lastImageRatio) , position: insertionIndexPath.item)
+                            self?.mapImageURLToUIImage[url] = UIImage(data: imageData)
+                            
                         }
                     })
                 } else {
@@ -168,6 +191,9 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
     }
     
     func collectionView(_ collectionView: UICollectionView, canHandle session: UIDropSession) -> Bool {
+        if galleryName == nil {
+            return false
+        }
         let isSelf = (session.localDragSession?.localContext as? UICollectionView) == collectionView
         if isSelf {
             return session.canLoadObjects(ofClass: UIImage.self)
@@ -179,7 +205,7 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
     // MARK: - Navigation
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if let imageVC = segue.destination.content as? ImageViewController {
+        if let imageVC = segue.destination.content as? ImageScrollViewController {
             if let cell = sender as? ImageGalleryCollectionViewCell {
                 imageVC.image = cell.imageView.image
             }
