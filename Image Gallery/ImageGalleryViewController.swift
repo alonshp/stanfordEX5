@@ -65,7 +65,7 @@ class ImageGalleryViewController: UIViewController, UICollectionViewDelegate, UI
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "imageCell", for: indexPath)
         if let imageCell = cell as? ImageGalleryCollectionViewCell {
 
-            if let imageGalleryData = ImageGalleyGlobalDataSource.shared.getGalleryForName(name: galleryName!)?.images[indexPath.item] {
+            if let galleryName = self.galleryName , let imageGalleryData = ImageGalleyGlobalDataSource.shared.getGalleryForName(name: galleryName)?.images[indexPath.item] {
                 let imageURL = imageGalleryData.imageURL
                 let imageRatio = imageGalleryData.imageRatio
                 if mapImageURLToUIImage[imageURL] != nil {
@@ -102,21 +102,26 @@ class ImageGalleryViewController: UIViewController, UICollectionViewDelegate, UI
     func collectionView(_ collectionView: UICollectionView,
                         layout collectionViewLayout: UICollectionViewLayout,
                         sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let aspectRatio = ImageGalleyGlobalDataSource.shared.getGalleryForName(name: galleryName!)?.images[indexPath.item].imageRatio
-        let imageHeight = currImagesWidth / aspectRatio!
-        return CGSize(width: currImagesWidth, height: imageHeight)
+
+        if  let galleryName = self.galleryName ,let aspectRatio = ImageGalleyGlobalDataSource.shared.getGalleryForName(name: galleryName)?.images[indexPath.item].imageRatio {
+            let imageHeight = currImagesWidth / aspectRatio
+            return CGSize(width: currImagesWidth, height: imageHeight)
+        } else {
+            return CGSize(width: currImagesWidth, height: currImagesWidth)
+        }
+
     }
     
     
     func collectionView(_ collectionView: UICollectionView, performDropWith coordinator: UICollectionViewDropCoordinator) {
-        guard galleryName != nil else {
+        guard let galleryName = self.galleryName else {
             return
         }
         let destinationIndexPath = coordinator.destinationIndexPath ?? IndexPath(item: 0, section: 0)
         for item in coordinator.items {
             if let sourceIndexPath = item.sourceIndexPath {
                 collectionView.performBatchUpdates({
-                    ImageGalleyGlobalDataSource.shared.moveImageData(from: sourceIndexPath.item, to: destinationIndexPath.item, galleryName: galleryName!)
+                    ImageGalleyGlobalDataSource.shared.moveImageData(from: sourceIndexPath.item, to: destinationIndexPath.item, galleryName: galleryName)
                     collectionView.deleteItems(at: [sourceIndexPath])
                     collectionView.insertItems(at: [destinationIndexPath])
                 })
