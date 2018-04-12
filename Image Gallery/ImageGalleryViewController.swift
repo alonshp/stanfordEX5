@@ -72,6 +72,7 @@ class ImageGalleryViewController: UIViewController, UICollectionViewDelegate, UI
                     imageCell.imageView.image = mapImageURLToUIImage[imageURL]
                 } else {
                     // fetch Image when load new gallery
+                    imageCell.imageView.image = nil
                     fetchImage(url: imageURL, position: indexPath.item, imageRatio: imageRatio)
                 }
             }

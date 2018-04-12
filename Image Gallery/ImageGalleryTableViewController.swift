@@ -31,7 +31,7 @@ class ImageGalleryTableViewController: UITableViewController, UISplitViewControl
     }
     
     var imageGalleryDocuments = [String]()
-    var recentlyDeletedDocuments = ["deleted1", "deleted2"]
+    var recentlyDeletedDocuments = [String]()
 
     @objc func doubleTapToEdit(_ sender: UITapGestureRecognizer){
         if sender.state == UIGestureRecognizerState.ended {
