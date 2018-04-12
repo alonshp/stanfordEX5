@@ -57,33 +57,39 @@ class ImageGalleryTableViewController: UITableViewController, UISplitViewControl
         return section == 0 ? imageGalleryDocuments.count : recentlyDeletedDocuments.count
     }
 
+    private func cellForRowAtImageGallerySection(_ editCell: EditTableViewCell, _ indexPath: IndexPath, _ tableView: UITableView) {
+        editCell.textField.isEnabled = false
+        editCell.textField.text = imageGalleryDocuments[indexPath.row]
+        editCell.resignationHandler = {
+            if let text = editCell.textField.text {
+                ImageGalleyGlobalDataSource.shared.changeGalleryName(from: self.imageGalleryDocuments[indexPath.row], to: text)
+                self.imageGalleryDocuments[indexPath.row] = text
+                tableView.reloadData()
+            }
+        }
+    }
+    
+    private func cellForRowAtRecentlyDeletedSection(_ editCell: EditTableViewCell, _ indexPath: IndexPath, _ tableView: UITableView) {
+        editCell.textField.isEnabled = false
+        editCell.textField.text = recentlyDeletedDocuments[indexPath.row]
+        editCell.resignationHandler = {
+            if let text = editCell.textField.text {
+                ImageGalleyGlobalDataSource.shared.changeGalleryName(from: self.recentlyDeletedDocuments[indexPath.row], to: text)
+                self.recentlyDeletedDocuments[indexPath.row] = text
+                tableView.reloadData()
+            }
+        }
+    }
+    
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "documentCell", for: indexPath)
         if let editCell = cell as? EditTableViewCell {
             if indexPath.section == 0 {
-                editCell.textField.isEnabled = false
-                editCell.textField.text = imageGalleryDocuments[indexPath.row]
-                editCell.resignationHandler = {
-                    if let text = editCell.textField.text {
-                        ImageGalleyGlobalDataSource.shared.changeGalleryName(from: self.imageGalleryDocuments[indexPath.row], to: text)
-                        self.imageGalleryDocuments[indexPath.row] = text
-                        tableView.reloadData()
-                    }
-                }
+                cellForRowAtImageGallerySection(editCell, indexPath, tableView)
             } else {
-                editCell.textField.isEnabled = false
-                editCell.textField.text = recentlyDeletedDocuments[indexPath.row]
-                editCell.resignationHandler = {
-                    if let text = editCell.textField.text {
-                        ImageGalleyGlobalDataSource.shared.changeGalleryName(from: self.recentlyDeletedDocuments[indexPath.row], to: text)
-                        self.recentlyDeletedDocuments[indexPath.row] = text
-                        tableView.reloadData()
-                    }
-                }
+                cellForRowAtRecentlyDeletedSection(editCell, indexPath, tableView)
             }
-
         }
-
         return cell
     }
     
@@ -126,9 +132,7 @@ class ImageGalleryTableViewController: UITableViewController, UISplitViewControl
                 recentlyDeletedDocuments += [deletedImageGallery]
                 tableView.reloadData()
             }
-        } else if editingStyle == .insert {
-            // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-        }    
+        }
     }
     
     // swipe to the other direction for undelete

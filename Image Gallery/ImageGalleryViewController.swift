@@ -11,7 +11,10 @@ import UIKit
 class ImageGalleryViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDropDelegate, UICollectionViewDragDelegate, UICollectionViewDelegateFlowLayout {
     
     override func viewDidLoad() {
-        // add pinch gesture
+        addPinchGesture()
+    }
+    
+    private func addPinchGesture() {
         let pinchGesture = UIPinchGestureRecognizer.init(target: self, action: #selector(self.changeImagesWidth(_:)))
         self.view.addGestureRecognizer(pinchGesture)
     }
@@ -51,10 +54,10 @@ class ImageGalleryViewController: UIViewController, UICollectionViewDelegate, UI
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        guard galleryName != nil else {
+        guard let galleryName = self.galleryName else {
             return 0
         }
-        if let imageGalleryData = ImageGalleyGlobalDataSource.shared.getGalleryForName(name: galleryName!) {
+        if let imageGalleryData = ImageGalleyGlobalDataSource.shared.getGalleryForName(name: galleryName) {
             return imageGalleryData.images.count
         } else {
             return 0
@@ -113,6 +116,26 @@ class ImageGalleryViewController: UIViewController, UICollectionViewDelegate, UI
     }
     
     
+    private func loadUIImageAndGetImageRatio(_ item: UICollectionViewDropItem) {
+        item.dragItem.itemProvider.loadObject(ofClass: UIImage.self) { (provider, error) in
+            // get aspect ratio
+            if let image = provider as? UIImage {
+                let imageWidth = image.size.width
+                let imageHeight = image.size.height
+                let imageRatio = Double(imageWidth) / Double(imageHeight)
+                self.lastImageRatio = imageRatio
+            }
+        }
+    }
+    
+    private func loadImageURLandUpdatePlaceholder(_ item: UICollectionViewDropItem, _ placeholderContext: UICollectionViewDropPlaceholderContext){
+        item.dragItem.itemProvider.loadObject(ofClass: NSURL.self) { (provider, error) in
+            if let url = provider as? URL {
+                self.fetchImageAndUpdatePlaceholder(url: url.imageURL, placeholderContext: placeholderContext)
+            }
+        }
+    }
+    
     func collectionView(_ collectionView: UICollectionView, performDropWith coordinator: UICollectionViewDropCoordinator) {
         guard let galleryName = self.galleryName else {
             return
@@ -132,23 +155,9 @@ class ImageGalleryViewController: UIViewController, UICollectionViewDelegate, UI
                     item.dragItem,
                     to: UICollectionViewDropPlaceholder(insertionIndexPath: destinationIndexPath, reuseIdentifier: "DropPlaceholderCell"))
                 
-                // load image
-                item.dragItem.itemProvider.loadObject(ofClass: UIImage.self) { (provider, error) in
-                    // get aspect ratio
-                    if let image = provider as? UIImage {
-                        let imageWidth = image.size.width
-                        let imageHeight = image.size.height
-                        let imageRatio = Double(imageWidth) / Double(imageHeight)
-                        self.lastImageRatio = imageRatio
-                    }
-                }
+                loadUIImageAndGetImageRatio(item)
                 
-                // load image url
-                item.dragItem.itemProvider.loadObject(ofClass: NSURL.self) { (provider, error) in
-                    if let url = provider as? URL {
-                        self.fetchImageAndUpdatePlaceholder(url: url.imageURL, placeholderContext: placeholderContext)
-                    }
-                }
+                loadImageURLandUpdatePlaceholder(item, placeholderContext)
             }
         }
     }
