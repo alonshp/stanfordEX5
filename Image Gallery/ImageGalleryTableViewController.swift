@@ -61,10 +61,14 @@ class ImageGalleryTableViewController: UITableViewController, UISplitViewControl
         editCell.textField.isEnabled = false
         editCell.textField.text = imageGalleryDocuments[indexPath.row]
         editCell.resignationHandler = {
-            if let text = editCell.textField.text {
-                ImageGalleyGlobalDataSource.shared.changeGalleryName(from: self.imageGalleryDocuments[indexPath.row], to: text)
-                self.imageGalleryDocuments[indexPath.row] = text
-                tableView.reloadData()
+            if var text = editCell.textField.text {
+                if text != self.imageGalleryDocuments[indexPath.row]{
+                    // make the new title to be unique
+                    text = text.madeUnique(withRespectTo: self.imageGalleryDocuments + self.recentlyDeletedDocuments)
+                    ImageGalleyGlobalDataSource.shared.changeGalleryName(from: self.imageGalleryDocuments[indexPath.row], to: text)
+                    self.imageGalleryDocuments[indexPath.row] = text
+                    tableView.reloadData()
+                }
             }
         }
     }
@@ -73,10 +77,14 @@ class ImageGalleryTableViewController: UITableViewController, UISplitViewControl
         editCell.textField.isEnabled = false
         editCell.textField.text = recentlyDeletedDocuments[indexPath.row]
         editCell.resignationHandler = {
-            if let text = editCell.textField.text {
-                ImageGalleyGlobalDataSource.shared.changeGalleryName(from: self.recentlyDeletedDocuments[indexPath.row], to: text)
-                self.recentlyDeletedDocuments[indexPath.row] = text
-                tableView.reloadData()
+            if var text = editCell.textField.text {
+                if text != self.recentlyDeletedDocuments[indexPath.row]{
+                    // make the new title to be unique
+                    text = text.madeUnique(withRespectTo: self.imageGalleryDocuments + self.recentlyDeletedDocuments)
+                    ImageGalleyGlobalDataSource.shared.changeGalleryName(from: self.recentlyDeletedDocuments[indexPath.row], to: text)
+                    self.recentlyDeletedDocuments[indexPath.row] = text
+                    tableView.reloadData()
+                }
             }
         }
     }

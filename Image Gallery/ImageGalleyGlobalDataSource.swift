@@ -29,12 +29,9 @@ class ImageGalleyGlobalDataSource: NSObject {
     }
     
     public func changeGalleryName(from: String, to: String) {
-        if let galleryIndex = galleriesMap.index(forKey: from){
-            galleriesMap[to] = galleriesMap[from]
-            galleriesMap.remove(at: galleryIndex)
-            galleriesMap[from]?.name = to
-        }
-        
+        galleriesMap[to] = ImageGalleryData(images: (galleriesMap[from]?.images)!, name: to)
+        galleriesMap.removeValue(forKey: from)
+        galleriesMap[from]?.name = to
     }
     
     public func getGalleryForName(name: String) -> ImageGalleryData? {
