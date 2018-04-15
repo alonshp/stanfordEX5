@@ -9,13 +9,23 @@
 import UIKit
 
 class ImageGalleryTableViewController: UITableViewController, UISplitViewControllerDelegate {
-
+    
+    var selectedRowIndexPath: IndexPath?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(self.doubleTapToEdit(_:)))
-        tapGesture.numberOfTapsRequired = 2
-        tableView.addGestureRecognizer(tapGesture)
+        let singleTapGesture = UITapGestureRecognizer(target: self, action:#selector(self.singleTapToSelect(_:)))
+        singleTapGesture.numberOfTapsRequired = 1
+        view.addGestureRecognizer(singleTapGesture)
+        
+        let doubleTapGesture = UITapGestureRecognizer(target: self, action:#selector(self.doubleTapToEdit(_:)))
+        doubleTapGesture.numberOfTapsRequired = 2
+        view.addGestureRecognizer(doubleTapGesture)
+        
+        singleTapGesture.require(toFail: doubleTapGesture)
+        
+        tableView.allowsSelection = false
     }
 
     override func didReceiveMemoryWarning() {
@@ -34,16 +44,25 @@ class ImageGalleryTableViewController: UITableViewController, UISplitViewControl
     var recentlyDeletedDocuments = [String]()
 
     @objc func doubleTapToEdit(_ sender: UITapGestureRecognizer){
-        if sender.state == UIGestureRecognizerState.ended {
-            let tapLocation = sender.location(in: self.tableView)
-            if let tapIndexPath = self.tableView.indexPathForRow(at: tapLocation) {
-                if let tappedCell = self.tableView.cellForRow(at: tapIndexPath) as? EditTableViewCell {
-                    tappedCell.textField.isEnabled = true
-                }
+        let tapLocation = sender.location(in: self.tableView)
+        if let tapIndexPath = self.tableView.indexPathForRow(at: tapLocation) {
+            if let tappedCell = self.tableView.cellForRow(at: tapIndexPath) as? EditTableViewCell {
+                tappedCell.textField.isEnabled = true
             }
         }
     }
     
+    @objc func singleTapToSelect(_ sender: UITapGestureRecognizer){
+        let tapLocation = sender.location(in: self.tableView)
+        if let tapIndexPath = self.tableView.indexPathForRow(at: tapLocation) {
+            tableView.reloadData()
+            if tapIndexPath.section == 0 {
+                selectedRowIndexPath = tapIndexPath
+                tableView.cellForRow(at: tapIndexPath)?.tag = tapIndexPath.item
+                performSegue(withIdentifier: "Choose Image Gallery", sender: tableView.cellForRow(at: tapIndexPath))
+            }
+        }
+    }
     
     
     // MARK: - Table view data source
@@ -67,8 +86,8 @@ class ImageGalleryTableViewController: UITableViewController, UISplitViewControl
                     text = text.madeUnique(withRespectTo: self.imageGalleryDocuments + self.recentlyDeletedDocuments)
                     ImageGalleyGlobalDataSource.shared.changeGalleryName(from: self.imageGalleryDocuments[indexPath.row], to: text)
                     self.imageGalleryDocuments[indexPath.row] = text
-                    tableView.reloadData()
                 }
+                tableView.reloadData()
             }
         }
     }
@@ -83,19 +102,28 @@ class ImageGalleryTableViewController: UITableViewController, UISplitViewControl
                     text = text.madeUnique(withRespectTo: self.imageGalleryDocuments + self.recentlyDeletedDocuments)
                     ImageGalleyGlobalDataSource.shared.changeGalleryName(from: self.recentlyDeletedDocuments[indexPath.row], to: text)
                     self.recentlyDeletedDocuments[indexPath.row] = text
-                    tableView.reloadData()
                 }
+                tableView.reloadData()
             }
         }
     }
     
+    var lastSelectedEditCell: EditTableViewCell?
+    
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "documentCell", for: indexPath)
         if let editCell = cell as? EditTableViewCell {
+            editCell.isEditing = false
             if indexPath.section == 0 {
+                if let selectedRowIndexPath = self.selectedRowIndexPath, selectedRowIndexPath.row == indexPath.row {
+                    editCell.textField.backgroundColor = #colorLiteral(red: 0.8039215803, green: 0.8039215803, blue: 0.8039215803, alpha: 1)
+                } else {
+                    editCell.textField.backgroundColor = #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1)
+                }
                 cellForRowAtImageGallerySection(editCell, indexPath, tableView)
             } else {
                 cellForRowAtRecentlyDeletedSection(editCell, indexPath, tableView)
+                editCell.textField.backgroundColor = #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1)
             }
         }
         return cell
@@ -161,15 +189,6 @@ class ImageGalleryTableViewController: UITableViewController, UISplitViewControl
     private var splitViewDetailViewController: ImageGalleryViewController? {
         return splitViewController?.viewControllers.last as? ImageGalleryViewController
     }
-    
-    
-    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if indexPath.section == 0 {
-            tableView.cellForRow(at: indexPath)?.tag = indexPath.item
-            performSegue(withIdentifier: "Choose Image Gallery", sender: tableView.cellForRow(at: indexPath))
-        }
-    }
-
     
     // MARK: - Navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
