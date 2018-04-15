@@ -134,12 +134,15 @@
                                             <rect key="frame" x="0.0" y="0.0" width="400" height="200"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" animating="YES" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="FxE-WT-GPd">
-                                                    <rect key="frame" x="191" y="91" width="20" height="20"/>
-                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" animating="YES" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="FxE-WT-GPd">
+                                                    <rect key="frame" x="190" y="90" width="20" height="20"/>
                                                 </activityIndicatorView>
                                             </subviews>
                                         </view>
+                                        <constraints>
+                                            <constraint firstItem="FxE-WT-GPd" firstAttribute="centerY" secondItem="7HD-8C-h1h" secondAttribute="centerY" id="3Zu-Ai-dhL"/>
+                                            <constraint firstItem="FxE-WT-GPd" firstAttribute="centerX" secondItem="7HD-8C-h1h" secondAttribute="centerX" id="940-jJ-Qis"/>
+                                        </constraints>
                                     </collectionViewCell>
                                 </cells>
                             </collectionView>

@@ -29,10 +29,11 @@ class ImageGalleyGlobalDataSource: NSObject {
     }
     
     public func changeGalleryName(from: String, to: String) {
-        // Oded: please dont use !
-        galleriesMap[to] = ImageGalleryData(images: (galleriesMap[from]?.images)!, name: to)
-        galleriesMap.removeValue(forKey: from)
-        galleriesMap[from]?.name = to
+        if let galleryData = galleriesMap[from]?.images {
+            galleriesMap[to] = ImageGalleryData(images: galleryData, name: to)
+            galleriesMap.removeValue(forKey: from)
+            galleriesMap[from]?.name = to
+        }
     }
     
     public func getGalleryForName(name: String) -> ImageGalleryData? {
