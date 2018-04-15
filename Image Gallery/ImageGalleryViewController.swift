@@ -19,6 +19,7 @@ class ImageGalleryViewController: UIViewController, UICollectionViewDelegate, UI
         self.view.addGestureRecognizer(pinchGesture)
     }
     
+    //Oded: usually the class properties are located at the top of all the methods.
     @IBOutlet weak var collectionView: UICollectionView!
     
     var galleryName: String?
@@ -32,7 +33,7 @@ class ImageGalleryViewController: UIViewController, UICollectionViewDelegate, UI
         return collectionView?.collectionViewLayout as? UICollectionViewFlowLayout
     }
     
-    var imageFetcher: ImageFetcher!
+    var imageFetcher: ImageFetcher! //Oded: you are not using imageFetcher so why is it here?
 
     @IBOutlet weak var imageGalleryView: UICollectionView! {
         didSet {
@@ -44,6 +45,7 @@ class ImageGalleryViewController: UIViewController, UICollectionViewDelegate, UI
     }
     
     @objc func changeImagesWidth(_ sender: UIPinchGestureRecognizer) {
+        //Oded: check if possible to make it a bit less delicate
         currImagesWidth = currImagesWidth * Double(sender.scale)
         if currImagesWidth < 100 {
             currImagesWidth = 100
@@ -90,9 +92,12 @@ class ImageGalleryViewController: UIViewController, UICollectionViewDelegate, UI
     private func fetchImage(url: URL, position: Int, imageRatio: Double, spinner: UIActivityIndicatorView ){
         DispatchQueue.global(qos: .userInitiated).async { [weak self] in
             let urlContents = try? Data(contentsOf: url)
+            // Oded: UIImage(data: imageData) - is relatively heavy processing and better if done off the main thread, i.e. do it here
+            // let image = UIImage(data: imageData)
             DispatchQueue.main.async {
                 spinner.stopAnimating()
                 if let imageData = urlContents {
+                    // Oded: self?.mapImageURLToUIImage[url] = image
                     self?.mapImageURLToUIImage[url] = UIImage(data: imageData)
                     self?.collectionView.reloadData()
                 } else {
@@ -143,6 +148,7 @@ class ImageGalleryViewController: UIViewController, UICollectionViewDelegate, UI
         let destinationIndexPath = coordinator.destinationIndexPath ?? IndexPath(item: 0, section: 0)
         for item in coordinator.items {
             if let sourceIndexPath = item.sourceIndexPath {
+                // Oded: where is the model update?
                 collectionView.performBatchUpdates({
                     ImageGalleyGlobalDataSource.shared.moveImageData(from: sourceIndexPath.item, to: destinationIndexPath.item, galleryName: galleryName)
                     collectionView.deleteItems(at: [sourceIndexPath])
@@ -169,6 +175,7 @@ class ImageGalleryViewController: UIViewController, UICollectionViewDelegate, UI
                 if let imageData = urlContents, let lastImageRatio = self?.lastImageRatio {
                     placeholderContext.commitInsertion(dataSourceUpdates: {insertionIndexPath in
                         if let galleryName = self?.galleryName {
+                            // Oded: do not call ImageData.init explicitly, just call ImageData(imageURL: url, imageRatio: lastImageRatio)
                             ImageGalleyGlobalDataSource.shared.addImageToGallery(name: galleryName , imageData: ImageData.init(imageURL: url, imageRatio: lastImageRatio) , position: insertionIndexPath.item)
                             self?.mapImageURLToUIImage[url] = UIImage(data: imageData)
                             
