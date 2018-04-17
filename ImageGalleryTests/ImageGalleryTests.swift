@@ -11,6 +11,9 @@ import XCTest
 
 class ImageGalleryTests: XCTestCase {
     
+    let urlStr = "https://www.google.com"
+    
+    
     override func setUp() {
         super.setUp()
         // Put setup code here. This method is called before the invocation of each test method in the class.
@@ -27,14 +30,16 @@ class ImageGalleryTests: XCTestCase {
     }
     
     func testEncodeAndDecodeImageData() {
-        let urlStr = "https://www.google.com"
         guard let imageUrl = URL(string: urlStr) else {
             XCTFail()
             return
         }
         let imageData = ImageData(imageURL: imageUrl, imageRatio: 13.5)
-        let encoder = JSONEncoder()
-        let productJSON = try? encoder.encode(imageData)
+        
+        // encode
+        let productJSON = try? JSONEncoder().encode(imageData)
+        
+        // decoede
         let decodedImageData = try? JSONDecoder().decode(ImageData.self, from: productJSON!)
         
         XCTAssertEqual(urlStr, imageData.imageURL.absoluteString)
@@ -44,7 +49,6 @@ class ImageGalleryTests: XCTestCase {
     }
     
     func testEncodeAndDecodeImageGalleryData() {
-        let urlStr = "https://www.google.com"
         guard let imageUrl = URL(string: urlStr) else {
             XCTFail()
             return
@@ -52,7 +56,10 @@ class ImageGalleryTests: XCTestCase {
         let imageData = ImageData(imageURL: imageUrl, imageRatio: 13.5)
         let imageGalleryData = ImageGalleryData(images: [imageData], name: "untitled")
         
+        // encode
         let productJSON = try? JSONEncoder().encode(imageGalleryData)
+        
+        // decode
         let decodedImageGalleryData = try? JSONDecoder().decode(ImageGalleryData.self, from: productJSON!)
         
         XCTAssertEqual(urlStr, imageData.imageURL.absoluteString)
@@ -64,7 +71,6 @@ class ImageGalleryTests: XCTestCase {
     }
     
     func testEncodeAndDecodegalleriesMap(){
-        let urlStr = "https://www.google.com"
         guard let imageUrl = URL(string: urlStr) else {
             XCTFail()
             return
@@ -74,8 +80,11 @@ class ImageGalleryTests: XCTestCase {
         
         var galleriesMap = [String : ImageGalleryData]()
         galleriesMap["untitled"] = imageGalleryData
+        
+        // encode
         let productJSON = try? JSONEncoder().encode(galleriesMap)
         
+        // decode
         let decodedgalleriesMap = try? JSONDecoder().decode(Dictionary<String,ImageGalleryData>.self, from: productJSON!)
         
         XCTAssertEqual(urlStr, decodedgalleriesMap!["untitled"]?.images[0].imageURL.absoluteString)
