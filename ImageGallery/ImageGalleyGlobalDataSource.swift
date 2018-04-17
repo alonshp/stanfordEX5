@@ -83,7 +83,7 @@ class ImageGalleyGlobalDataSource: NSObject {
     }
     
     // MARK: image gallery functions
-    
+
     public func createGallery(name: String) {
         let newGallery = ImageGalleryData(images: [], name: name)
         galleriesMap[name] = newGallery
@@ -114,7 +114,30 @@ class ImageGalleyGlobalDataSource: NSObject {
             galleriesMap[galleryName]?.images.remove(at: from)
             galleriesMap[galleryName]?.images.insert(imageData, at: to)
         }
-        
+    }
+    
+    public func getArrayOfImageGalleryNames() -> [String] {
+        var imageGalleryNames = [String]()
+        for (galleryName, imageGalleryData) in galleriesMap {
+            if !imageGalleryData.recentlyDeleted {
+                imageGalleryNames.append(galleryName)
+            }
+        }
+        return imageGalleryNames.sorted()
+    }
+    
+    public func getArrayOfRecentlyDeletedImageGalleryNames() -> [String] {
+        var RecentlyDeletedImageGalleryNames = [String]()
+        for (galleryName, imageGalleryData) in galleriesMap {
+            if imageGalleryData.recentlyDeleted {
+                RecentlyDeletedImageGalleryNames.append(galleryName)
+            }
+        }
+        return RecentlyDeletedImageGalleryNames.sorted()
+    }
+    
+    public func updateRecentlyDeleted(ofGallery imageGalleryName: String, to: Bool) {
+        galleriesMap[imageGalleryName]?.recentlyDeleted = to
     }
     
     private func saveGalleriesToDisk() {
