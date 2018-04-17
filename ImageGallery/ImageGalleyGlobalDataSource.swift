@@ -9,8 +9,10 @@
 import UIKit
 
 class ImageGalleyGlobalDataSource: NSObject {
-    
+
     static let shared = ImageGalleyGlobalDataSource()
+    
+    private let galleriesMapFileNameOnDisk = "galleriesMap.json"
     
     private var galleriesMap = [String : ImageGalleryData]()
     
@@ -65,6 +67,19 @@ class ImageGalleyGlobalDataSource: NSObject {
     func readGalleriesMapDataFromUserDefaults(from key: String) -> Data? {
         let defaults = UserDefaults.standard
         return defaults.object(forKey: key) as? Data
+    }
+    
+    func saveGalleriesMapData() {
+        if let encodedGalleriesMap = encodeGalleriesMap() {
+            writeGalleriesMapToDisk(data: encodedGalleriesMap, to: galleriesMapFileNameOnDisk)
+        }
+    }
+    
+    func openGalleriesMapData() {
+        if let data = readGalleriesMapDataFromDisk(from: galleriesMapFileNameOnDisk),
+            let decodeGalleriesMap = decodeGalleriesMap(data: data){
+            self.galleriesMap = decodeGalleriesMap
+        }
     }
     
     // MARK: image gallery functions
