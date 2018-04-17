@@ -71,7 +71,10 @@ class ImageGalleryViewController: UIViewController, UICollectionViewDelegate, UI
                 if mapImageURLToUIImage[imageURL] != nil {
                     imageCell.spinner.isHidden = true
                     imageCell.imageView.image = mapImageURLToUIImage[imageURL]
-                } else {
+                } else if let image = AppDelegate.imageCache.object(forKey: imageURL as NSURL){
+                    imageCell.spinner.isHidden = true
+                    imageCell.imageView.image = image
+                }else{
                     // fetch Image when load new gallery
                     imageCell.imageView.image = nil
                     imageCell.spinner.isHidden = false
@@ -97,6 +100,7 @@ class ImageGalleryViewController: UIViewController, UICollectionViewDelegate, UI
                 if let image = image {
                     self?.mapImageURLToUIImage[url] = image
                     self?.collectionView.reloadData()
+                    AppDelegate.imageCache.setObject(image, forKey: url as NSURL)
                 } else {
                     self?.showAlertWhenImageUnableToFetch()
                 }
@@ -166,14 +170,20 @@ class ImageGalleryViewController: UIViewController, UICollectionViewDelegate, UI
     
     private func fetchImageAndUpdatePlaceholder(url: URL, placeholderContext: UICollectionViewDropPlaceholderContext) {
         DispatchQueue.global(qos: .userInitiated).async { [weak self] in
+            var image: UIImage?
             let urlContents = try? Data(contentsOf: url)
+            if let imageData = urlContents {
+                image = UIImage(data: imageData)
+            }
             DispatchQueue.main.async {
-                if let imageData = urlContents, let lastImageRatio = self?.lastImageRatio {
+                if let lastImageRatio = self?.lastImageRatio {
                     placeholderContext.commitInsertion(dataSourceUpdates: {insertionIndexPath in
                         if let galleryName = self?.galleryName {
                             ImageGalleyGlobalDataSource.shared.addImageToGallery(name: galleryName , imageData: ImageData(imageURL: url, imageRatio: lastImageRatio) , position: insertionIndexPath.item)
-                            self?.mapImageURLToUIImage[url] = UIImage(data: imageData)
-                            
+                            if let image = image {
+                                self?.mapImageURLToUIImage[url] = image
+                                AppDelegate.imageCache.setObject(image, forKey: url as NSURL)
+                            }
                         }
                     })
                 } else {
