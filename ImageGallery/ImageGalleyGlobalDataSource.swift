@@ -57,7 +57,17 @@ class ImageGalleyGlobalDataSource: NSObject {
         return nil
     }
     
+    func writeGalleriesMapToUserDefaults(data: Data, to key: String) {
+        let defaults = UserDefaults.standard
+        defaults.set(data, forKey: key)
+    }
     
+    func readGalleriesMapDataFromUserDefaults(from key: String) -> Data? {
+        let defaults = UserDefaults.standard
+        return defaults.object(forKey: key) as? Data
+    }
+    
+    // MARK: image gallery functions
     
     public func createGallery(name: String) {
         let newGallery = ImageGalleryData(images: [], name: name)

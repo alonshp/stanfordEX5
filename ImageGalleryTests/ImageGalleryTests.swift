@@ -14,6 +14,9 @@ class ImageGalleryTests: XCTestCase {
     let urlStr = "https://www.google.com"
     let galleryName = "untitled"
     let imageRatio = 13.5
+    let otherGalleryName = "untitled2"
+    let otherImageRatio = 16.8
+    let otherUrlStr = "https://www.cnn.com"
     
     
     override func setUp() {
@@ -96,9 +99,6 @@ class ImageGalleryTests: XCTestCase {
     
     func testReadAndWriteGalleriesMapToDisk() {
         let galleriesMapFileName = "galleriesMap.json"
-        let otherGalleryName = "untitled2"
-        let otherImageRatio = 16.8
-        let otherUrlStr = "https://www.cnn.com"
         guard let imageUrl = URL(string: urlStr), let otherImageUrl = URL(string: otherUrlStr) else {
             XCTFail()
             return
@@ -119,6 +119,46 @@ class ImageGalleryTests: XCTestCase {
 
         // read
         let dataFromDisk = ImageGalleyGlobalDataSource.shared.readGalleriesMapDataFromDisk(from: galleriesMapFileName)
+        XCTAssertNotNil(dataFromDisk)
+        let decodedGalleriesMap = try? JSONDecoder().decode(Dictionary<String,ImageGalleryData>.self, from: dataFromDisk!)
+        XCTAssertNotNil(decodedGalleriesMap)
+        
+        // test first gallery
+        XCTAssertEqual(urlStr, decodedGalleriesMap![galleryName]?.images[0].imageURL.absoluteString)
+        XCTAssertEqual(imageRatio, decodedGalleriesMap![galleryName]?.images[0].imageRatio)
+        XCTAssertEqual(galleryName, decodedGalleriesMap![galleryName]?.name)
+        
+        // test second gallery
+        XCTAssertEqual(otherUrlStr, decodedGalleriesMap![otherGalleryName]?.images[0].imageURL.absoluteString)
+        XCTAssertEqual(urlStr, decodedGalleriesMap![otherGalleryName]?.images[1].imageURL.absoluteString)
+        XCTAssertEqual(otherImageRatio, decodedGalleriesMap![otherGalleryName]?.images[0].imageRatio)
+        XCTAssertEqual(imageRatio, decodedGalleriesMap![otherGalleryName]?.images[1].imageRatio)
+        XCTAssertEqual(otherGalleryName, decodedGalleriesMap![otherGalleryName]?.name)
+    }
+    
+    func testReadAndWriteGalleriesMapToUserDefaults() {
+        let galleriesMapUserDefaultsKey = "galleriesMap.json"
+        guard let imageUrl = URL(string: urlStr), let otherImageUrl = URL(string: otherUrlStr) else {
+            XCTFail()
+            return
+        }
+        let imageData = ImageData(imageURL: imageUrl, imageRatio: imageRatio)
+        let otherImageData = ImageData(imageURL: otherImageUrl, imageRatio: otherImageRatio)
+        
+        let imageGalleryData = ImageGalleryData(images: [imageData], name: galleryName)
+        let otherImageGalleryData = ImageGalleryData(images: [otherImageData, imageData], name: otherGalleryName)
+        
+        var galleriesMap = [String : ImageGalleryData]()
+        galleriesMap[galleryName] = imageGalleryData
+        galleriesMap[otherGalleryName] = otherImageGalleryData
+        
+        // write
+        let productJSON = try? JSONEncoder().encode(galleriesMap)
+        XCTAssertNotNil(productJSON)
+        ImageGalleyGlobalDataSource.shared.writeGalleriesMapToUserDefaults(data: productJSON!, to: galleriesMapUserDefaultsKey)
+        
+        // read
+        let dataFromDisk = ImageGalleyGlobalDataSource.shared.readGalleriesMapDataFromUserDefaults(from: galleriesMapUserDefaultsKey)
         XCTAssertNotNil(dataFromDisk)
         let decodedGalleriesMap = try? JSONDecoder().decode(Dictionary<String,ImageGalleryData>.self, from: dataFromDisk!)
         XCTAssertNotNil(decodedGalleriesMap)
