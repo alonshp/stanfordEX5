@@ -19,6 +19,46 @@ class ImageGalleyGlobalDataSource: NSObject {
         // read galleries from disk
     }
     
+    // MARK: read to disk and write to disk
+    func encodeGalleriesMap() -> Data?{
+        return try? JSONEncoder().encode(self.galleriesMap)
+    }
+    
+    func decodeGalleriesMap(data: Data) -> [String : ImageGalleryData]? {
+        return try? JSONDecoder().decode(Dictionary<String,ImageGalleryData>.self, from: data)
+    }
+    
+    private func getURL(_ fileManager: FileManager, _ fileName: String) throws -> URL {
+        return try fileManager.url(
+            for: .documentDirectory,
+            in: .userDomainMask,
+            appropriateFor: nil,
+            create: false).appendingPathComponent(fileName)
+    }
+    
+    func writeGalleriesMapToDisk(data: Data, to fileName: String) {
+        let fileManager = FileManager.default
+        do {
+            let url = try getURL(fileManager, fileName)
+            try data.write(to: url)
+        } catch {
+            print(error)
+        }
+    }
+    
+    func readGalleriesMapDataFromDisk(from fileName: String) -> Data? {
+        let fileManager = FileManager.default
+        do {
+            let url = try getURL(fileManager, fileName)
+            return try Data(contentsOf: url)
+        } catch {
+            print(error)
+        }
+        return nil
+    }
+    
+    
+    
     public func createGallery(name: String) {
         let newGallery = ImageGalleryData(images: [], name: name)
         galleriesMap[name] = newGallery
