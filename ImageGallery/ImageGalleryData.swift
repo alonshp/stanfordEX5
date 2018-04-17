@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct ImageGalleryData {
+struct ImageGalleryData: Codable {
     var images = [ImageData]()
     var name:String
     
@@ -18,7 +18,7 @@ struct ImageGalleryData {
     }
 }
 
-struct ImageData {
+struct ImageData: Codable {
     var imageURL:URL
     var imageRatio:Double
     
