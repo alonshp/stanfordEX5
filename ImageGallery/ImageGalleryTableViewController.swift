@@ -12,6 +12,9 @@ class ImageGalleryTableViewController: UITableViewController, UISplitViewControl
     
     var selectedRowIndexPath: IndexPath?
     
+    var imageGalleryDocuments = [String]()
+    var recentlyDeletedDocuments = [String]()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -26,6 +29,16 @@ class ImageGalleryTableViewController: UITableViewController, UISplitViewControl
         singleTapGesture.require(toFail: doubleTapGesture)
         
         tableView.allowsSelection = false
+        
+        // load data from disk
+        ImageGalleyGlobalDataSource.shared.openGalleriesMapData()
+        for name in ImageGalleyGlobalDataSource.shared.getArrayOfImageGalleryNames() {
+            imageGalleryDocuments.append(name)
+        }
+        
+        for name in ImageGalleyGlobalDataSource.shared.getArrayOfRecentlyDeletedImageGalleryNames() {
+            recentlyDeletedDocuments.append(name)
+        }
     }
 
     override func didReceiveMemoryWarning() {
@@ -39,9 +52,7 @@ class ImageGalleryTableViewController: UITableViewController, UISplitViewControl
             splitViewController?.preferredDisplayMode = .primaryOverlay
         }
     }
-    
-    var imageGalleryDocuments = [String]()
-    var recentlyDeletedDocuments = [String]()
+
 
     @objc func doubleTapToEdit(_ sender: UITapGestureRecognizer){
         let tapLocation = sender.location(in: self.tableView)
@@ -159,10 +170,12 @@ class ImageGalleryTableViewController: UITableViewController, UISplitViewControl
         if editingStyle == .delete {
             // Delete the row from the data source
             if indexPath.section == 1 {
+                ImageGalleyGlobalDataSource.shared.deleteGallery(name: recentlyDeletedDocuments[indexPath.row])
                 recentlyDeletedDocuments.remove(at: indexPath.row)
                 tableView.deleteRows(at: [indexPath], with: .fade)
             } else {
                 let deletedImageGallery = imageGalleryDocuments[indexPath.row]
+                ImageGalleyGlobalDataSource.shared.updateRecentlyDeleted(ofGallery: deletedImageGallery, to: true)
                 imageGalleryDocuments.remove(at: indexPath.row)
                 tableView.deleteRows(at: [indexPath], with: .fade)
                 recentlyDeletedDocuments += [deletedImageGallery]
@@ -176,6 +189,7 @@ class ImageGalleryTableViewController: UITableViewController, UISplitViewControl
         if indexPath.section == 1 {
             let contextualAction = UIContextualAction.init(style: .normal, title: "Undelete", handler: {_,_,_ in
                 let undeletedImageGallery = self.recentlyDeletedDocuments[indexPath.row]
+                ImageGalleyGlobalDataSource.shared.updateRecentlyDeleted(ofGallery: undeletedImageGallery, to: false)
                 self.recentlyDeletedDocuments.remove(at: indexPath.row)
                 tableView.deleteRows(at: [indexPath], with: .fade)
                 self.imageGalleryDocuments += [undeletedImageGallery]

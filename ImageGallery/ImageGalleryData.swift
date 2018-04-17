@@ -10,6 +10,7 @@ import Foundation
 
 struct ImageGalleryData: Codable {
     var images = [ImageData]()
+    var recentlyDeleted = false
     var name:String
     
     init(images : [ImageData], name: String) {

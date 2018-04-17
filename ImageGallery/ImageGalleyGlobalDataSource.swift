@@ -9,8 +9,10 @@
 import UIKit
 
 class ImageGalleyGlobalDataSource: NSObject {
-    
+
     static let shared = ImageGalleyGlobalDataSource()
+    
+    private let galleriesMapFileNameOnDisk = "galleriesMap.json"
     
     private var galleriesMap = [String : ImageGalleryData]()
     
@@ -67,11 +69,28 @@ class ImageGalleyGlobalDataSource: NSObject {
         return defaults.object(forKey: key) as? Data
     }
     
-    // MARK: image gallery functions
+    func saveGalleriesMapData() {
+        if let encodedGalleriesMap = encodeGalleriesMap() {
+            writeGalleriesMapToDisk(data: encodedGalleriesMap, to: galleriesMapFileNameOnDisk)
+        }
+    }
     
+    func openGalleriesMapData() {
+        if let data = readGalleriesMapDataFromDisk(from: galleriesMapFileNameOnDisk),
+            let decodeGalleriesMap = decodeGalleriesMap(data: data){
+            self.galleriesMap = decodeGalleriesMap
+        }
+    }
+    
+    // MARK: image gallery functions
+
     public func createGallery(name: String) {
         let newGallery = ImageGalleryData(images: [], name: name)
         galleriesMap[name] = newGallery
+    }
+    
+    public func deleteGallery(name: String) {
+        galleriesMap.removeValue(forKey: name)
     }
     
     public func addImageToGallery(name:String, imageData: ImageData, position: Int) {
@@ -99,7 +118,30 @@ class ImageGalleyGlobalDataSource: NSObject {
             galleriesMap[galleryName]?.images.remove(at: from)
             galleriesMap[galleryName]?.images.insert(imageData, at: to)
         }
-        
+    }
+    
+    public func getArrayOfImageGalleryNames() -> [String] {
+        var imageGalleryNames = [String]()
+        for (galleryName, imageGalleryData) in galleriesMap {
+            if !imageGalleryData.recentlyDeleted {
+                imageGalleryNames.append(galleryName)
+            }
+        }
+        return imageGalleryNames.sorted()
+    }
+    
+    public func getArrayOfRecentlyDeletedImageGalleryNames() -> [String] {
+        var RecentlyDeletedImageGalleryNames = [String]()
+        for (galleryName, imageGalleryData) in galleriesMap {
+            if imageGalleryData.recentlyDeleted {
+                RecentlyDeletedImageGalleryNames.append(galleryName)
+            }
+        }
+        return RecentlyDeletedImageGalleryNames.sorted()
+    }
+    
+    public func updateRecentlyDeleted(ofGallery imageGalleryName: String, to: Bool) {
+        galleriesMap[imageGalleryName]?.recentlyDeleted = to
     }
     
     private func saveGalleriesToDisk() {
