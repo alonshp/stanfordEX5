@@ -26,6 +26,65 @@ class ImageGalleryTests: XCTestCase {
         // Use XCTAssert and related functions to verify your tests produce the correct results.
     }
     
+    func testEncodeAndDecodeImageData() {
+        let urlStr = "https://www.google.com"
+        guard let imageUrl = URL(string: urlStr) else {
+            XCTFail()
+            return
+        }
+        let imageData = ImageData(imageURL: imageUrl, imageRatio: 13.5)
+        let encoder = JSONEncoder()
+        let productJSON = try? encoder.encode(imageData)
+        let decodedImageData = try? JSONDecoder().decode(ImageData.self, from: productJSON!)
+        
+        XCTAssertEqual(urlStr, imageData.imageURL.absoluteString)
+        XCTAssertEqual(urlStr, decodedImageData?.imageURL.absoluteString)
+        XCTAssertEqual(13.5, imageData.imageRatio)
+        XCTAssertEqual(13.5, decodedImageData?.imageRatio)
+    }
+    
+    func testEncodeAndDecodeImageGalleryData() {
+        let urlStr = "https://www.google.com"
+        guard let imageUrl = URL(string: urlStr) else {
+            XCTFail()
+            return
+        }
+        let imageData = ImageData(imageURL: imageUrl, imageRatio: 13.5)
+        let imageGalleryData = ImageGalleryData(images: [imageData], name: "untitled")
+        
+        let productJSON = try? JSONEncoder().encode(imageGalleryData)
+        let decodedImageGalleryData = try? JSONDecoder().decode(ImageGalleryData.self, from: productJSON!)
+        
+        XCTAssertEqual(urlStr, imageData.imageURL.absoluteString)
+        XCTAssertEqual(urlStr, decodedImageGalleryData?.images[0].imageURL.absoluteString)
+        XCTAssertEqual(13.5, imageData.imageRatio)
+        XCTAssertEqual(13.5, decodedImageGalleryData?.images[0].imageRatio)
+        XCTAssertEqual("untitled", imageGalleryData.name)
+        XCTAssertEqual("untitled", decodedImageGalleryData?.name)
+    }
+    
+    func testEncodeAndDecodegalleriesMap(){
+        let urlStr = "https://www.google.com"
+        guard let imageUrl = URL(string: urlStr) else {
+            XCTFail()
+            return
+        }
+        let imageData = ImageData(imageURL: imageUrl, imageRatio: 13.5)
+        let imageGalleryData = ImageGalleryData(images: [imageData], name: "untitled")
+        
+        var galleriesMap = [String : ImageGalleryData]()
+        galleriesMap["untitled"] = imageGalleryData
+        let productJSON = try? JSONEncoder().encode(galleriesMap)
+        
+        let decodedgalleriesMap = try? JSONDecoder().decode(Dictionary<String,ImageGalleryData>.self, from: productJSON!)
+        
+        XCTAssertEqual(urlStr, decodedgalleriesMap!["untitled"]?.images[0].imageURL.absoluteString)
+        XCTAssertEqual(13.5, decodedgalleriesMap!["untitled"]?.images[0].imageRatio)
+        XCTAssertEqual("untitled", decodedgalleriesMap!["untitled"]?.name)
+
+        
+    }
+    
     func testPerformanceExample() {
         // This is an example of a performance test case.
         self.measure {
