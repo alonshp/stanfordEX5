@@ -170,6 +170,7 @@ class ImageGalleryTableViewController: UITableViewController, UISplitViewControl
         if editingStyle == .delete {
             // Delete the row from the data source
             if indexPath.section == 1 {
+                ImageGalleyGlobalDataSource.shared.deleteGallery(name: recentlyDeletedDocuments[indexPath.row])
                 recentlyDeletedDocuments.remove(at: indexPath.row)
                 tableView.deleteRows(at: [indexPath], with: .fade)
             } else {

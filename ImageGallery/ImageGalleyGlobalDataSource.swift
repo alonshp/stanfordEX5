@@ -89,6 +89,10 @@ class ImageGalleyGlobalDataSource: NSObject {
         galleriesMap[name] = newGallery
     }
     
+    public func deleteGallery(name: String) {
+        galleriesMap.removeValue(forKey: name)
+    }
+    
     public func addImageToGallery(name:String, imageData: ImageData, position: Int) {
         galleriesMap[name]?.images.insert(imageData, at: position)
     }
