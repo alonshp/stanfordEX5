@@ -12,6 +12,8 @@ import XCTest
 class ImageGalleryTests: XCTestCase {
     
     let urlStr = "https://www.google.com"
+    let galleryName = "untitled"
+    let imageRatio = 13.5
     
     
     override func setUp() {
@@ -34,7 +36,7 @@ class ImageGalleryTests: XCTestCase {
             XCTFail()
             return
         }
-        let imageData = ImageData(imageURL: imageUrl, imageRatio: 13.5)
+        let imageData = ImageData(imageURL: imageUrl, imageRatio: imageRatio)
         
         // encode
         let productJSON = try? JSONEncoder().encode(imageData)
@@ -44,8 +46,8 @@ class ImageGalleryTests: XCTestCase {
         
         XCTAssertEqual(urlStr, imageData.imageURL.absoluteString)
         XCTAssertEqual(urlStr, decodedImageData?.imageURL.absoluteString)
-        XCTAssertEqual(13.5, imageData.imageRatio)
-        XCTAssertEqual(13.5, decodedImageData?.imageRatio)
+        XCTAssertEqual(imageRatio, imageData.imageRatio)
+        XCTAssertEqual(imageRatio, decodedImageData?.imageRatio)
     }
     
     func testEncodeAndDecodeImageGalleryData() {
@@ -53,8 +55,8 @@ class ImageGalleryTests: XCTestCase {
             XCTFail()
             return
         }
-        let imageData = ImageData(imageURL: imageUrl, imageRatio: 13.5)
-        let imageGalleryData = ImageGalleryData(images: [imageData], name: "untitled")
+        let imageData = ImageData(imageURL: imageUrl, imageRatio: imageRatio)
+        let imageGalleryData = ImageGalleryData(images: [imageData], name: galleryName)
         
         // encode
         let productJSON = try? JSONEncoder().encode(imageGalleryData)
@@ -64,34 +66,74 @@ class ImageGalleryTests: XCTestCase {
         
         XCTAssertEqual(urlStr, imageData.imageURL.absoluteString)
         XCTAssertEqual(urlStr, decodedImageGalleryData?.images[0].imageURL.absoluteString)
-        XCTAssertEqual(13.5, imageData.imageRatio)
-        XCTAssertEqual(13.5, decodedImageGalleryData?.images[0].imageRatio)
-        XCTAssertEqual("untitled", imageGalleryData.name)
-        XCTAssertEqual("untitled", decodedImageGalleryData?.name)
+        XCTAssertEqual(imageRatio, imageData.imageRatio)
+        XCTAssertEqual(imageRatio, decodedImageGalleryData?.images[0].imageRatio)
+        XCTAssertEqual(galleryName, imageGalleryData.name)
+        XCTAssertEqual(galleryName, decodedImageGalleryData?.name)
     }
     
-    func testEncodeAndDecodegalleriesMap(){
+    func testEncodeAndDecodeGalleriesMap(){
         guard let imageUrl = URL(string: urlStr) else {
             XCTFail()
             return
         }
-        let imageData = ImageData(imageURL: imageUrl, imageRatio: 13.5)
-        let imageGalleryData = ImageGalleryData(images: [imageData], name: "untitled")
+        let imageData = ImageData(imageURL: imageUrl, imageRatio: imageRatio)
+        let imageGalleryData = ImageGalleryData(images: [imageData], name: galleryName)
         
         var galleriesMap = [String : ImageGalleryData]()
-        galleriesMap["untitled"] = imageGalleryData
+        galleriesMap[galleryName] = imageGalleryData
         
         // encode
         let productJSON = try? JSONEncoder().encode(galleriesMap)
         
         // decode
-        let decodedgalleriesMap = try? JSONDecoder().decode(Dictionary<String,ImageGalleryData>.self, from: productJSON!)
+        let decodedGalleriesMap = try? JSONDecoder().decode(Dictionary<String,ImageGalleryData>.self, from: productJSON!)
         
-        XCTAssertEqual(urlStr, decodedgalleriesMap!["untitled"]?.images[0].imageURL.absoluteString)
-        XCTAssertEqual(13.5, decodedgalleriesMap!["untitled"]?.images[0].imageRatio)
-        XCTAssertEqual("untitled", decodedgalleriesMap!["untitled"]?.name)
+        XCTAssertEqual(urlStr, decodedGalleriesMap![galleryName]?.images[0].imageURL.absoluteString)
+        XCTAssertEqual(imageRatio, decodedGalleriesMap![galleryName]?.images[0].imageRatio)
+        XCTAssertEqual(galleryName, decodedGalleriesMap![galleryName]?.name)
+    }
+    
+    func testReadAndWriteGalleriesMapToDisk() {
+        let galleriesMapFileName = "galleriesMap.json"
+        let otherGalleryName = "untitled2"
+        let otherImageRatio = 16.8
+        let otherUrlStr = "https://www.cnn.com"
+        guard let imageUrl = URL(string: urlStr), let otherImageUrl = URL(string: otherUrlStr) else {
+            XCTFail()
+            return
+        }
+        let imageData = ImageData(imageURL: imageUrl, imageRatio: imageRatio)
+        let otherImageData = ImageData(imageURL: otherImageUrl, imageRatio: otherImageRatio)
+        
+        let imageGalleryData = ImageGalleryData(images: [imageData], name: galleryName)
+        let otherImageGalleryData = ImageGalleryData(images: [otherImageData, imageData], name: otherGalleryName)
+        
+        var galleriesMap = [String : ImageGalleryData]()
+        galleriesMap[galleryName] = imageGalleryData
+        galleriesMap[otherGalleryName] = otherImageGalleryData
+        
+        // write
+        let productJSON = try? JSONEncoder().encode(galleriesMap)
+        ImageGalleyGlobalDataSource.shared.writeGalleriesMapToDisk(data: productJSON!, to: galleriesMapFileName)
 
+        // read
+        let dataFromDisk = ImageGalleyGlobalDataSource.shared.readGalleriesMapDataFromDisk(from: galleriesMapFileName)
+        XCTAssertNotNil(dataFromDisk)
+        let decodedGalleriesMap = try? JSONDecoder().decode(Dictionary<String,ImageGalleryData>.self, from: dataFromDisk!)
+        XCTAssertNotNil(decodedGalleriesMap)
         
+        // test first gallery
+        XCTAssertEqual(urlStr, decodedGalleriesMap![galleryName]?.images[0].imageURL.absoluteString)
+        XCTAssertEqual(imageRatio, decodedGalleriesMap![galleryName]?.images[0].imageRatio)
+        XCTAssertEqual(galleryName, decodedGalleriesMap![galleryName]?.name)
+        
+        // test second gallery
+        XCTAssertEqual(otherUrlStr, decodedGalleriesMap![otherGalleryName]?.images[0].imageURL.absoluteString)
+        XCTAssertEqual(urlStr, decodedGalleriesMap![otherGalleryName]?.images[1].imageURL.absoluteString)
+        XCTAssertEqual(otherImageRatio, decodedGalleriesMap![otherGalleryName]?.images[0].imageRatio)
+        XCTAssertEqual(imageRatio, decodedGalleriesMap![otherGalleryName]?.images[1].imageRatio)
+        XCTAssertEqual(otherGalleryName, decodedGalleriesMap![otherGalleryName]?.name)
     }
     
     func testPerformanceExample() {
