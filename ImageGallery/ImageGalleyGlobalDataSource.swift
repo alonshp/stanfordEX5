@@ -16,6 +16,8 @@ class ImageGalleyGlobalDataSource: NSObject {
     
     private var galleriesMap = [String : ImageGalleryData]()
     
+    var imageCache = NSCache<NSURL, UIImage>()
+    
     // Initialization
     private override init() {
         // read galleries from disk

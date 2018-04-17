@@ -71,7 +71,7 @@ class ImageGalleryViewController: UIViewController, UICollectionViewDelegate, UI
                 if mapImageURLToUIImage[imageURL] != nil {
                     imageCell.spinner.isHidden = true
                     imageCell.imageView.image = mapImageURLToUIImage[imageURL]
-                } else if let image = AppDelegate.imageCache.object(forKey: imageURL as NSURL){
+                } else if let image = ImageGalleyGlobalDataSource.shared.imageCache.object(forKey: imageURL as NSURL){
                     imageCell.spinner.isHidden = true
                     imageCell.imageView.image = image
                 }else{
@@ -100,7 +100,7 @@ class ImageGalleryViewController: UIViewController, UICollectionViewDelegate, UI
                 if let image = image {
                     self?.mapImageURLToUIImage[url] = image
                     self?.collectionView.reloadData()
-                    AppDelegate.imageCache.setObject(image, forKey: url as NSURL)
+                    ImageGalleyGlobalDataSource.shared.imageCache.setObject(image, forKey: url as NSURL)
                 } else {
                     self?.showAlertWhenImageUnableToFetch()
                 }
@@ -182,7 +182,7 @@ class ImageGalleryViewController: UIViewController, UICollectionViewDelegate, UI
                             ImageGalleyGlobalDataSource.shared.addImageToGallery(name: galleryName , imageData: ImageData(imageURL: url, imageRatio: lastImageRatio) , position: insertionIndexPath.item)
                             if let image = image {
                                 self?.mapImageURLToUIImage[url] = image
-                                AppDelegate.imageCache.setObject(image, forKey: url as NSURL)
+                                ImageGalleyGlobalDataSource.shared.imageCache.setObject(image, forKey: url as NSURL)
                             }
                         }
                     })
