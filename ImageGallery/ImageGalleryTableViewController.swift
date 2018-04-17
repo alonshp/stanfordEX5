@@ -31,7 +31,6 @@ class ImageGalleryTableViewController: UITableViewController, UISplitViewControl
         tableView.allowsSelection = false
         
         // load data from disk
-        ImageGalleyGlobalDataSource.shared.openGalleriesMapData()
         for name in ImageGalleyGlobalDataSource.shared.getArrayOfImageGalleryNames() {
             imageGalleryDocuments.append(name)
         }

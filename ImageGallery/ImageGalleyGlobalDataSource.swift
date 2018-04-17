@@ -21,6 +21,8 @@ class ImageGalleyGlobalDataSource: NSObject {
     // Initialization
     private override init() {
         // read galleries from disk
+        super.init()
+        openGalleriesMapData()
     }
     
     // MARK: read to disk and write to disk
@@ -142,8 +144,8 @@ class ImageGalleyGlobalDataSource: NSObject {
         return RecentlyDeletedImageGalleryNames.sorted()
     }
     
-    public func updateRecentlyDeleted(ofGallery imageGalleryName: String, to: Bool) {
-        galleriesMap[imageGalleryName]?.recentlyDeleted = to
+    public func updateRecentlyDeleted(ofGallery imageGalleryName: String, to deleted: Bool) {
+        galleriesMap[imageGalleryName]?.recentlyDeleted = deleted
     }
     
     private func saveGalleriesToDisk() {
